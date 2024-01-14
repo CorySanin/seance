@@ -184,7 +184,7 @@ export default class Web {
                 this._webserver = app.listen(port, () => console.log(`seance running on port ${port}`));
             }
             else {
-                console.error(err);
+                console.error('Failed establishing connectiong to SMTP server', err);
             }
         });
     }
