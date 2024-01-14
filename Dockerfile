@@ -22,12 +22,15 @@ RUN bun run build.ts && \
   chown -R bun .
 
 
-FROM baseimg
+FROM baseimg as deploy
 WORKDIR /usr/src/seance
+HEALTHCHECK  --timeout=3s \
+  CMD curl --fail http://localhost:8080/healthcheck || exit 1
+RUN apk add --no-cache curl
 COPY --from=dependencies /build .
 COPY --from=build-env /build/assets ./assets
 COPY . .
 USER bun
 
-EXPOSE 35711
+EXPOSE 8080
 CMD [ "bun", "run", "index.ts"]

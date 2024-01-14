@@ -175,6 +175,10 @@ export default class Web {
             app.post('/', sendMail);
         }
 
+        app.get('/healthcheck', (_, res) => {
+            res.send('Healthy');
+        });
+
         emailTransport.verify((err, success) => {
             if (success) {
                 this._webserver = app.listen(port, () => console.log(`seance running on port ${port}`));
