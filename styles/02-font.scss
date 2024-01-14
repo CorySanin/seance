@@ -1,0 +1,33 @@
+body {
+    font-family: sans-serif;
+    font-size: 1.1em;
+    line-height: 1.2em;
+}
+
+h1 {
+    font-size: 2em;
+    line-height: 1.4em;
+}
+
+p {
+    line-height: 2em;
+}
+
+a {
+    text-decoration: underline;
+}
+
+input[type="button"],
+input[type="submit"],
+button,
+.button {
+    line-height: 1em;
+    font-size: inherit;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.powered-by {
+    font-size: .5em;
+    line-height: 1em;
+}

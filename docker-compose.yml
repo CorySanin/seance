@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+    seance:
+        container_name: seance
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        restart: "always"
+        ports:
+            - 8080:8080
+        volumes:
+            - ./config:/usr/src/seance/config:ro

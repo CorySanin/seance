@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+    <%- include("head", locals) %>
+
+    <meta name="robots" content="noindex">
+</head>
+
+<body <% if (locals.dark) { echo('class="dark"') }%>>
+    <div id="main">
+        <div class="container" class="panel">
+            <h1><%= header %></h1>
+            <p><%= text %></p>
+            <%- include("powered-by", locals) %>
+        </div>
+    </div>
+</body>
+
+</html>

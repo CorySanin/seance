@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+    <%- include("head", locals) %>
+
+    <% if (locals.recaptcha) { %>
+        <script nonce="<%= nonce %>" src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <% } %>
+</head>
+
+<body <% if (locals.dark) { echo('class="dark"') }%>>
+    <div id="main">
+        <div class="container" class="panel">
+            <form class="form" method="post">
+                <label for="nameTxt">Name</label>
+                <input name="name" id="nameTxt" type="text" required />
+                <label for="emailTxt">Email</label>
+                <input name="email" id="emailTxt" type="email" required />
+                <label for="messageTxt">Message</label>
+                <textarea name="message" id="messageTxt" required></textarea>
+                <% if (locals.recaptcha) { %>
+                <div class="second-col g-recaptcha" data-sitekey="<%= recaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
+                <% } %>
+                <div class="second-col"><input id="sendBtn" type="submit" value="Send" <% if (recaptcha) { %>disabled<% } %>></div>
+                <div class="second-col"><%- include("powered-by", locals) %></div>
+            </form>
+        </div>
+    </div>
+    <script nonce="<%= nonce %>" src="/assets/js/form.js" defer></script>
+</body>
+
+</html>

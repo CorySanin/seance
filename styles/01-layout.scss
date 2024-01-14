@@ -1,0 +1,78 @@
+html,
+body {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*:after {
+    box-sizing: inherit;
+}
+
+.container {
+    max-width: 40em;
+    margin: auto;
+    padding: .25em 0;
+}
+
+.form {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .5em;
+
+    &>label {
+        text-align: right;
+    }
+
+    &>textarea {
+        width: 100%;
+        min-height: 6em;
+        max-height: 30em;
+        resize: vertical;
+    }
+}
+
+.fullwidth {
+    grid-column: span 2;
+}
+
+.second-col {
+    grid-column: 2;
+}
+
+.center {
+    text-align: center;
+}
+
+input,
+textarea,
+button,
+.button {
+    border-style: solid;
+    border-width: 2px;
+}
+
+input[type="button"],
+input[type="submit"],
+button,
+.button {
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    &:disabled,
+    &[disabled] {
+        cursor: not-allowed;
+    }
+}
+
+input,
+textarea,
+button,
+.button {
+    border-radius: 2px;
+}

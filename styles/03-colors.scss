@@ -1,0 +1,51 @@
+:root {
+    --foreground: #212121;
+    --inputbg: #EEEEEE;
+    --inputborder: #BDBDBD;
+    --subtle: #616161;
+    --link: #3949AB;
+}
+
+body.dark {
+    --foreground: #EEEEEE;
+    --inputbg: #212121;
+    --inputborder: #616161;
+    --subtle: #BDBDBD;
+    --link: #7986CB;
+}
+
+html,
+body {
+    background: none transparent;
+    color: var(--foreground);
+}
+
+a {
+    color: var(--link);
+}
+
+input,
+textarea,
+button,
+.button {
+    background-color: var(--inputbg);
+    border-color: var(--inputborder);
+    color: inherit;
+
+    &:hover {
+        border-color: var(--foreground);
+    }
+    
+    &:disabled,
+    &[disabled] {
+        color: var(--inputborder);
+
+        &:hover {
+            border-color: var(--inputborder);
+        }
+    }
+}
+
+.powered-by {
+    color: var(--subtle);
+}
