@@ -20,13 +20,23 @@ body {
     grid-template-columns: auto 1fr;
     gap: .5em;
 
+    &.processing {
+        cursor: wait;
+
+        label,
+        input,
+        textarea {
+            cursor: inherit;
+        }
+    }
+
     &>label {
         text-align: right;
     }
 
     &>textarea {
         width: 100%;
-        min-height: 6em;
+        min-height: 8em;
         max-height: 30em;
         resize: vertical;
     }
@@ -62,11 +72,6 @@ button,
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-
-    &:disabled,
-    &[disabled] {
-        cursor: not-allowed;
-    }
 }
 
 input,
@@ -74,6 +79,11 @@ textarea,
 button,
 .button {
     padding: 5px 10px;
+
+    &:disabled,
+    &[disabled] {
+        cursor: not-allowed;
+    }
 }
 
 body label {
@@ -99,7 +109,7 @@ button,
     .fullwidth {
         grid-column: span 1;
     }
-    
+
     .second-col {
         grid-column: 1;
     }

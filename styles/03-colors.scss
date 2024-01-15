@@ -37,7 +37,8 @@ button,
     }
     
     &:disabled,
-    &[disabled] {
+    &[disabled],
+    &[readonly] {
         color: var(--inputborder);
 
         &:hover {

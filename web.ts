@@ -77,7 +77,7 @@ export default class Web {
                 {
                     nonce,
                     recaptcha: recaptchaKey,
-                    dark: !!req.query.dark
+                    dark: req?.query?.dark && req.query.dark != 'false'
                 },
                 function (err, html) {
                     if (!err) {
@@ -106,7 +106,7 @@ export default class Web {
 
         let sendMail = async (req: express.Request, res: express.Response, next?: express.NextFunction) => {
             const renderPage = createPageRenderer(res);
-
+            let dark = req?.query?.dark && req.query.dark != 'false';
             if (req?.body?.email && req.body.name && req.body.message && emailValidator.test(req.body.email)) {
                 try {
                     console.log(await emailTransport.sendMail({
@@ -118,7 +118,7 @@ export default class Web {
                     }));
                     res.render('result',
                         {
-                            dark: !!req.query.dark,
+                            dark,
                             header: 'Message sent',
                             text: 'Your message has been received. Thank you!'
                         },
@@ -130,7 +130,7 @@ export default class Web {
                     res.status(500);
                     res.render('result',
                         {
-                            dark: !!req.query.dark,
+                            dark,
                             header: 'Error',
                             text: 'An error occurred while attempting to deliver your message. Try again later.'
                         },
@@ -142,7 +142,7 @@ export default class Web {
                 res.status(400);
                 res.render('result',
                     {
-                        dark: !!req.query.dark,
+                        dark,
                         header: 'Error',
                         text: 'There was something wrong with the form you submitted. Go back and try again.'
                     },
