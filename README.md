@@ -22,6 +22,8 @@ To run:
 bun run index.ts [path/to/config.json5]
 ```
 
+A docker image `corysanin/seance:master` is provided. See [docker-compose.yml](/docker-compose.yml).
+
 ## Configuration
 
 Seance takes a JSON or JSON5 config file (default location is config/config.json):
