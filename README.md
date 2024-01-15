@@ -1,6 +1,14 @@
 # Seance for Ghost
 
-Self-hostable contact form service for Ghost blogs. Or any other application you can think of. The limit is in your mind.
+Self-hostable contact form service for Ghost blogs. Or any other applications you can think of. The limit is in your mind.
+
+Add a contact form to your Ghost site without a subscription!
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/CorySanin/seance/master/assets/images/screenshot_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/CorySanin/seance/master/assets/images/screenshot_light.png">
+  <img alt="Seance embedded in a Ghost page" src="https://raw.githubusercontent.com/CorySanin/seance/master/assets/images/screenshot_light.png">
+</picture>
 
 ## Install and run
 
