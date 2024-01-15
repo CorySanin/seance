@@ -3,6 +3,9 @@
 
 <head>
     <%- include("head", locals) %>
+    <link rel="alternate" type="application/json+oembed"
+    href="<%= domain %>/services/oembed?url=<%= encodeURIComponent(url) %>&format=json"
+    title="Contact form" />
 
     <% if (locals.recaptcha) { %>
         <script nonce="<%= nonce %>" src="https://www.google.com/recaptcha/api.js" async defer></script>

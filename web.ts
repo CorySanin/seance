@@ -72,11 +72,14 @@ export default class Web {
         app.use('/assets', express.static('assets'));
 
         app.get('/', (req, res) => {
-            let nonce = genNonceForCSP();
+            const nonce = genNonceForCSP();
+            const domain = `${req.protocol}://${req.headers.host}`;
             res.render('index',
                 {
                     nonce,
                     recaptcha: recaptchaKey,
+                    domain,
+                    url: `${domain}${req.url}`,
                     dark: req?.query?.dark && req.query.dark != 'false'
                 },
                 function (err, html) {
@@ -89,6 +92,34 @@ export default class Web {
                         res.status(500).send('Something went wrong. Please try again later.');
                     }
                 });
+        });
+
+        app.get('/services/oembed/?', (req, res) => {
+            const defaultWidth = 720;
+            const defaultHeight = 600;
+            const urlParam = req.query?.url;
+            const url = urlParam && typeof urlParam === 'string' && new URL(urlParam);
+            const domain = `${req.protocol}://${req.headers.host}`;
+            if (!url || url.pathname !== '/') {
+                res.status(404).json({
+                    success: false
+                });
+            }
+            else if ('format' in req.query && (req.query.format as string).toLowerCase() !== 'json') {
+                res.status(501).send('oEmbed response is JSON only.');
+            }
+            else {
+                const width = Math.min(defaultWidth, parseInt(typeof req.query.maxwidth === 'string' && req.query.maxwidth || `${defaultWidth}`));
+                const height = Math.min(defaultHeight, parseInt(typeof req.query.maxheight === 'string' && req.query.maxheight || `${defaultHeight}`));
+                res.json({
+                    success: true,
+                    type: 'rich',
+                    version: '1.0',
+                    width,
+                    height,
+                    html: `<iframe width="${width}" height="${height}" src="${domain}${url.pathname}${url.search}" frameBorder="0" style="max-width:100%"></iframe>`
+                });
+            }
         });
 
         const createPageRenderer = (res: express.Response) => {
@@ -104,9 +135,9 @@ export default class Web {
             }
         }
 
-        let sendMail = async (req: express.Request, res: express.Response, next?: express.NextFunction) => {
+        const sendMail = async (req: express.Request, res: express.Response, next?: express.NextFunction) => {
             const renderPage = createPageRenderer(res);
-            let dark = req?.query?.dark && req.query.dark != 'false';
+            const dark = req?.query?.dark && req.query.dark != 'false';
             if (req?.body?.email && req.body.name && req.body.message && emailValidator.test(req.body.email)) {
                 try {
                     console.log(await emailTransport.sendMail({

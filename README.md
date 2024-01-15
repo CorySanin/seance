@@ -41,10 +41,10 @@ Seance takes a JSON or JSON5 config file (default location is config/config.json
 
 ## Ghost Installation
 
-Create a page for your contact form. Add an "HTML" section. Add the following iframe:
+Create a page for your contact form. Add an "Other" embed section. Enter your Seance instance's URL:
 
 ```
-<iframe width="100%" height="600" src="https://contact.example.com.com/?dark=false" frameBorder="0"></iframe>
+https://contact.example.com/?dark=false
 ```
 
-Be sure to use the URL for your Seance instance. If you're using a dark theme you can change the `dark` parameter to `true`.
+If you're using a dark theme you can change the `dark` parameter to `true`. Note that the dark mode may look weird in the editor. It will look better on the live site.
