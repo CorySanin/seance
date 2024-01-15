@@ -12,7 +12,7 @@ body {
 .container {
     max-width: 40em;
     margin: auto;
-    padding: .25em 0;
+    padding: .25em;
 }
 
 .form {
@@ -58,7 +58,6 @@ button,
 .button {
     cursor: pointer;
     display: inline-block;
-    padding: 5px 10px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -74,5 +73,34 @@ input,
 textarea,
 button,
 .button {
+    padding: 5px 10px;
+}
+
+body label {
+    padding: 5px 0px;
+}
+
+input,
+textarea,
+button,
+.button {
     border-radius: 2px;
+}
+
+@media screen and (max-width: 400px) {
+    .form {
+        grid-template-columns: 1fr;
+
+        &>label {
+            text-align: initial;
+        }
+    }
+
+    .fullwidth {
+        grid-column: span 1;
+    }
+    
+    .second-col {
+        grid-column: 1;
+    }
 }
