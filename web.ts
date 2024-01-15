@@ -1,7 +1,7 @@
 import * as http from "http";
 import crypto from 'crypto';
 import type { Express } from "express";
-import express from 'express';
+import express, { application } from 'express';
 import bodyParser from 'body-parser';
 import Recaptcha from 'express-recaptcha';
 import nodemailer from "nodemailer";
@@ -179,12 +179,15 @@ export default class Web {
             res.send('Healthy');
         });
 
+        this._webserver = app.listen(port, () => console.log(`seance running on port ${port}`));
+
         emailTransport.verify((err, success) => {
-            if (success) {
-                this._webserver = app.listen(port, () => console.log(`seance running on port ${port}`));
+            if (err || !success) {
+                console.error('Failed establishing connectiong to SMTP server', err);
+                process.exit(25);
             }
             else {
-                console.error('Failed establishing connectiong to SMTP server', err);
+                console.log('SMPT configuration verified');
             }
         });
     }
