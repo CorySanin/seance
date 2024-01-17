@@ -26,7 +26,7 @@ A docker image `corysanin/seance:master` is provided. See [docker-compose.yml](/
 
 ## Configuration
 
-Seance takes a JSON or JSON5 config file (default location is config/config.json):
+Seance takes a JSON or JSON5 config file (default location is config/config.json5):
 
 ```
 {
