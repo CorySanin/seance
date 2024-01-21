@@ -1,4 +1,4 @@
-![Seance for Ghost](/assets/svg/seance-logo.png "Seance for Ghost")
+![Seance for Ghost](/assets/logo/seance-logo.png "Seance for Ghost")
 
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/CorySanin/seance/.github%2Fworkflows%2Fbuild_docker_image.yml)](https://github.com/CorySanin/seance/actions)
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/CorySanin/seance)](https://github.com/CorySanin/seance)
