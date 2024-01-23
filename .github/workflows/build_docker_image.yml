@@ -69,14 +69,18 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
+      
+      - name: Build and Deploy
+        run: |
+          echo "${{ steps.meta-develop.outputs.tags }}"
 
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           target: deploy
           push: true
-          tags: ${{ if(startsWith(github.ref, 'refs/tags/v'), steps.meta.outputs.tags, steps.meta-develop.outputs.tags) }}
-          labels: ${{ if(startsWith(github.ref, 'refs/tags/v'), steps.meta.outputs.labels, steps.meta-develop.outputs.labels) }}
+          tags: ${{ steps.meta-develop.outputs.tags }}
+          labels: ${{ steps.meta-develop.outputs.labels }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha,scope=${{ github.workflow }}
           cache-to: type=gha,mode=max,scope=${{ github.workflow }}
