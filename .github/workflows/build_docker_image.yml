@@ -61,7 +61,7 @@ jobs:
 
       - name: Extract metadata for develop Docker image
         if: "!startsWith(github.ref, 'refs/tags/v')"
-        id: meta
+        id: meta-develop
         uses: docker/metadata-action@v3
         with:
           images: |
@@ -75,8 +75,8 @@ jobs:
         with:
           target: deploy
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ if(startsWith(github.ref, 'refs/tags/v'), steps.meta.outputs.tags, steps.meta-develop.outputs.tags) }}
+          labels: ${{ if(startsWith(github.ref, 'refs/tags/v'), steps.meta.outputs.labels, steps.meta-develop.outputs.labels) }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha,scope=${{ github.workflow }}
           cache-to: type=gha,mode=max,scope=${{ github.workflow }}
