@@ -2,8 +2,8 @@
 
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/CorySanin/seance/.github%2Fworkflows%2Fbuild_docker_image.yml)](https://github.com/CorySanin/seance/actions)
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/CorySanin/seance)](https://github.com/CorySanin/seance)
-[![GitHub Release](https://img.shields.io/github/v/release/CorySanin/seance)
-![GitHub Release Date](https://img.shields.io/github/release-date-pre/CorySanin/seance)](https://github.com/CorySanin/seance/releases/latest)
+[![GitHub Release](https://img.shields.io/github/v/release/CorySanin/seance)](https://github.com/CorySanin/seance/releases/latest)
+[![GitHub Release Date](https://img.shields.io/github/release-date-pre/CorySanin/seance)](https://github.com/CorySanin/seance/releases/latest)
 [![Docker Pulls](https://img.shields.io/docker/pulls/corysanin/seance)](https://hub.docker.com/r/corysanin/seance)
 [![GitHub License](https://img.shields.io/github/license/CorySanin/seance)](/LICENSE)
 
