@@ -67,10 +67,11 @@ jobs:
           images: |
             ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=raw,value=debug
             type=ref,event=branch
             type=ref,event=pr
       
-      - name: Build and Deploy
+      - name: debug meta
         run: |
           echo "${{ steps.meta-develop.outputs.tags }}"
 
