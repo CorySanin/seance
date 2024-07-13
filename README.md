@@ -32,7 +32,8 @@ To run:
 bun run index.ts [path/to/config.json5]
 ```
 
-A docker image `corysanin/seance:master` is provided. See [docker-compose.yml](/docker-compose.yml).
+A docker image `ghcr.io/corysanin/seance` is provided. A list of tags is available [here](https://github.com/CorySanin/seance/pkgs/container/seance/versions?filters%5Bversion_type%5D=tagged). 
+See [docker-compose.yml](/docker-compose.yml).
 
 ## Configuration
 
@@ -42,7 +43,8 @@ Seance takes a JSON or JSON5 config file (default location is config/config.json
 {
     // The port the web server will run on (default 8080)
     "port": number,
-    // Array of hosts allowed to embed the contact form. Default is to allow all (not recommended)
+    // Array of hosts allowed to embed the contact form.
+    // Default is to allow all (not recommended)
     allowedHosts: string[],
     // If using reCAPTCHA, provide the site key
     recaptchaKey: string,

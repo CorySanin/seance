@@ -3,6 +3,7 @@ version: '2'
 services:
     seance:
         container_name: seance
+        #image: corysanin/seance:latest
         build:
             context: ./
             dockerfile: Dockerfile
