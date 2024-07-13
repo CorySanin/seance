@@ -19,7 +19,7 @@ await (async function () {
     filePath = filePath || process.env.CONTACTCONFIG || path.join('config/config.json5');
 
     try {
-        options = JSON5.parse(await Bun.file(filePath).text());
+        options = JSON5.parse((await fsp.readFile(filePath)).toString());
     }
     catch {
         console.log(`Failed to read file "${filePath}". A config file will not be used.`);
