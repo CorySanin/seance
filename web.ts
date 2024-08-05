@@ -4,6 +4,7 @@ import type { Express } from "express";
 import express, { application } from 'express';
 import bodyParser from 'body-parser';
 import Recaptcha from 'express-recaptcha';
+import * as HCaptcha from 'hcaptcha';
 import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 
@@ -14,6 +15,8 @@ interface ContactFormForGhostConfig {
     allowedHosts?: string[];
     recaptchaKey?: string;
     recaptchaSecret?: string;
+    hCaptchaKey?: string;
+    hCaptchaSecret?: string;
     smtp?: SMTPTransport | SMTPTransport.Options;
     senderAddress?: string;
     recipientAddress?: string;
@@ -50,8 +53,11 @@ export default class Web {
         const emailValidator = /^[^@\s]+@[^@.\s]+\.[^@\s]+$/;
         const emailTransport = nodemailer.createTransport(options.smtp);
         const recaptchaKey = process.env.RECAPTCHAKEY || options.recaptchaKey;
+        const hCaptchaKey = process.env.HCAPTCHAKEY || options.hCaptchaKey;
         const recaptchaSecret = process.env.RECAPTCHASECRET || options.recaptchaSecret;
+        const hCaptchaSecret = process.env.HCAPTCHASECRET || options.hCaptchaSecret;
         const recaptcha = (recaptchaKey && recaptchaSecret) ? new Recaptcha.RecaptchaV2(recaptchaKey, recaptchaSecret, { checkremoteip: true }) : null;
+        const hCaptcha = hCaptchaKey && hCaptchaSecret;
 
         const throwIfUndefined = <T>(value: T | undefined, errorMessage: string): T => {
             if (value === undefined) {
@@ -78,6 +84,7 @@ export default class Web {
                 {
                     nonce,
                     recaptcha: recaptchaKey,
+                    hCaptcha: hCaptchaKey,
                     domain,
                     url: `${domain}${req.url}`,
                     dark: req?.query?.dark && req.query.dark != 'false'
@@ -135,6 +142,20 @@ export default class Web {
             }
         }
 
+        const sendError = (req: express.Request, res: express.Response, next?: express.NextFunction) => {
+            res.status(400);
+            res.render('result',
+                {
+                    dark : !!req.query.dark,
+                    header: 'Error',
+                    text: 'There was something wrong with the form you submitted. Go back and try again.'
+                },
+                createPageRenderer(res)
+            );
+
+            next && next();
+        }
+
         const sendMail = async (req: express.Request, res: express.Response, next?: express.NextFunction) => {
             const renderPage = createPageRenderer(res);
             const dark = req?.query?.dark && req.query.dark != 'false';
@@ -170,15 +191,7 @@ export default class Web {
                 }
             }
             else {
-                res.status(400);
-                res.render('result',
-                    {
-                        dark,
-                        header: 'Error',
-                        text: 'There was something wrong with the form you submitted. Go back and try again.'
-                    },
-                    renderPage
-                );
+                sendError(req, res, next);
             }
 
             next && next();
@@ -190,15 +203,18 @@ export default class Web {
                     sendMail(req, res);
                 }
                 else {
-                    res.status(400);
-                    res.render('result',
-                        {
-                            dark: !!req.query.dark,
-                            header: 'Error',
-                            text: 'There was something wrong with the form you submitted. Go back and try again.'
-                        },
-                        createPageRenderer(res)
-                    );
+                    sendError(req, res);
+                }
+            });
+        }
+        else if(hCaptcha) {
+            app.post('/', async (req, res) => {
+                const data = await HCaptcha.verify(hCaptchaSecret, req?.body['h-captcha-response']);
+                if (data.success === true) {
+                    sendMail(req, res);
+                }
+                else {
+                    sendError(req, res);
                 }
             });
         }

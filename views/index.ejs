@@ -9,6 +9,8 @@
 
     <% if (locals.recaptcha) { %>
         <script nonce="<%= nonce %>" src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <% } else if (locals.hCaptcha) { %>
+        <script nonce="<%= nonce %>" src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <% } %>
 </head>
 
@@ -24,6 +26,8 @@
                 <textarea name="message" id="messageTxt" required></textarea>
                 <% if (locals.recaptcha) { %>
                 <div class="second-col g-recaptcha" data-sitekey="<%= recaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
+                <% } else if (locals.hCaptcha) { %>
+                <div class="h-captcha" data-sitekey="<%= hCaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
                 <% } %>
                 <div class="second-col"><input id="sendBtn" type="submit" value="Send" <% if (recaptcha) { %>disabled<% } %>></div>
                 <div class="second-col"><%- include("powered-by", locals) %></div>

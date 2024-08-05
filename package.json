@@ -2,7 +2,7 @@
   "name": "seance-for-ghost",
   "module": "index.ts",
   "type": "module",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "license": "GPL-3.0",
   "dependencies": {
     "body-parser": "1.20.2",
@@ -10,6 +10,7 @@
     "nodemailer": "6.9.14",
     "express": "4.19.2",
     "express-recaptcha": "5.1.0",
+    "hcaptcha": "0.2.0",
     "json5": "2.2.3"
   },
   "devDependencies": {
@@ -20,7 +21,7 @@
     "@types/nodemailer": "6.4.15",
     "csso": "5.0.5",
     "sass": "1.77.8",
-    "uglify-js": "3.18.0"
+    "uglify-js": "3.19.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
