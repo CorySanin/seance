@@ -27,7 +27,7 @@
                 <% if (locals.recaptcha) { %>
                 <div class="second-col g-recaptcha" data-sitekey="<%= recaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
                 <% } else if (locals.hCaptcha) { %>
-                <div class="h-captcha" data-sitekey="<%= hCaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
+                <div class="second-col h-captcha" data-sitekey="<%= hCaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
                 <% } %>
                 <div class="second-col"><input id="sendBtn" type="submit" value="Send" <% if (recaptcha) { %>disabled<% } %>></div>
                 <div class="second-col"><%- include("powered-by", locals) %></div>

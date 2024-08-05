@@ -12,7 +12,7 @@
 
 Self-hostable contact form service for Ghost blogs. Or any other applications you can think of. The limit is in your mind.
 
-Add a contact form to your Ghost site without a subscription!
+Add a contact form to your Ghost site without a subscription! Supports captchas from reCAPTCHA and hCaptcha.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/CorySanin/seance/master/assets/images/screenshot_dark.png">
@@ -50,6 +50,10 @@ Seance takes a JSON or JSON5 config file (default location is config/config.json
     recaptchaKey: string,
     // If using reCAPTCHA, provide the site secret
     recaptchaSecret: string,
+    // If using hCaptcha, provide the site key
+    hCaptchaKey: string,
+    // If using hCaptcha, provide the account secret
+    hCaptchaSecret: string,
     // The Nodemailer transport configuration. See https://nodemailer.com/smtp/
     smtp: SMTPTransport | SMTPTransport.Options,
     // The address to send emails from. Defaults to the smtp username

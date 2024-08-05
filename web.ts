@@ -91,7 +91,7 @@ export default class Web {
                 },
                 function (err, html) {
                     if (!err) {
-                        res.set('Content-Security-Policy', `frame-ancestors 'self' ${allowedHosts}; default-src 'self' https://www.google.com; connect-src 'self' *; script-src 'self' 'nonce-${nonce}'`);
+                        res.set('Content-Security-Policy', `frame-ancestors 'self' ${allowedHosts}; default-src 'self' https://www.google.com https://*.hcaptcha.com; connect-src 'self' *; script-src 'self' 'nonce-${nonce}'`);
                         res.send(html);
                     }
                     else {
@@ -132,7 +132,7 @@ export default class Web {
         const createPageRenderer = (res: express.Response) => {
             return (err: Error, html: string) => {
                 if (!err) {
-                    res.set('Content-Security-Policy', `frame-ancestors 'self' ${allowedHosts}; default-src 'self'; connect-src 'self' *; script-src 'self'`);
+                    res.set('Content-Security-Policy', `frame-ancestors 'self' ${allowedHosts}; default-src 'self'; connect-src 'self' *; script-src 'self';`);
                     res.send(html);
                 }
                 else {
