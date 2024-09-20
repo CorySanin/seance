@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "license": "GPL-3.0",
   "dependencies": {
-    "body-parser": "1.20.2",
+    "body-parser": "1.20.3",
     "ejs": "3.1.10",
     "nodemailer": "6.9.14",
     "express": "4.19.2",
