@@ -18,7 +18,7 @@ RUN bun install --no-progress
 
 COPY . .
 
-RUN bun run build.ts && \
+RUN bun run build-shit && \
   chown -R bun .
 
 
