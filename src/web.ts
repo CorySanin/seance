@@ -101,7 +101,7 @@ export default class Web {
                 });
         });
 
-        app.get('/services/oembed/?', (req, res) => {
+        app.get('/services/oembed{/}', (req, res) => {
             const defaultWidth = 720;
             const defaultHeight = 600;
             const urlParam = req.query?.url;
