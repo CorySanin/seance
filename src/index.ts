@@ -1,4 +1,4 @@
-import web from './web';
+import web from './web.js';
 import JSON5 from 'json5'
 import fs from 'fs';
 import path from 'path';

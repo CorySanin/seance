@@ -1,36 +1,23 @@
-FROM oven/bun:alpine AS baseimg
+FROM node:23-alpine AS baseimg
 
-FROM baseimg AS dependencies
+FROM baseimg AS build-env
 WORKDIR /build
 
 COPY ./package*json ./
-COPY ./bun.lockb ./
-RUN bun install --production --no-progress && \
-  chown -R bun .
-
-
-FROM dependencies as build-env
-WORKDIR /build
-
-RUN apk add --no-cache libwebp libwebp-tools
-
-RUN bun install --no-progress
-
+RUN npm ci
 COPY . .
+RUN npm run build && \
+  npm exec tsc && \
+  npm ci --only=production --omit=dev
 
-RUN bun run build-shit && \
-  chown -R bun .
 
-
-FROM baseimg as deploy
+FROM baseimg AS deploy
 WORKDIR /usr/src/seance
 HEALTHCHECK  --timeout=3s \
   CMD curl --fail http://localhost:8080/healthcheck || exit 1
 RUN apk add --no-cache curl
-COPY --from=dependencies /build .
-COPY --from=build-env /build/assets ./assets
-COPY . .
-USER bun
+COPY --from=build-env /build .
+USER node
 
 EXPOSE 8080
-CMD [ "bun", "run", "index.ts"]
+CMD [ "npm", "run", "start"]
