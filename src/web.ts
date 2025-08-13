@@ -2,11 +2,13 @@ import * as http from "http";
 import crypto from 'crypto';
 import type { Express } from "express";
 import express, { application } from 'express';
+import { rateLimit, MemoryStore } from 'express-rate-limit';
 import bodyParser from 'body-parser';
 import Recaptcha from 'express-recaptcha';
 import * as HCaptcha from 'hcaptcha';
 import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
+import type { Options as LimiterOptions } from 'express-rate-limit';
 
 const CSPNONCE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
@@ -21,6 +23,7 @@ interface ContactFormForGhostConfig {
     senderAddress?: string;
     recipientAddress?: string;
     subject?: string;
+    limiter?: Partial<LimiterOptions>;
 }
 
 /**
@@ -37,6 +40,31 @@ function genNonceForCSP(length: number = 16): string {
         chars.push(CSPNONCE[bytes[i] % CSPNONCE.length]);
     }
     return chars.join('');
+}
+
+function setDefaultLimits(options: Partial<LimiterOptions>): Partial<LimiterOptions> {
+    options.windowMs ||= 50000;
+    options.limit ||= 3;
+    options.legacyHeaders ||= false;
+    options.store = new MemoryStore();
+    const messageText = options.message || 'Too many requests, please try again later.';
+    options.message = (req: express.Request, res: express.Response) => {
+        return new Promise((resolve, reject) => {
+            res.render('rate-limit', {
+                text: messageText,
+                dark: req?.query?.dark && req.query.dark != 'false'
+            }, (err, html) => {
+                if (!err) {
+                    resolve(html);
+                }
+                else {
+                    console.error(err);
+                    reject('Something went wrong. Please try again later.');
+                }
+            });
+        });
+    }
+    return options;
 }
 
 
@@ -58,6 +86,7 @@ export default class Web {
         const hCaptchaSecret = process.env.HCAPTCHASECRET || options.hCaptchaSecret;
         const recaptcha = (recaptchaKey && recaptchaSecret) ? new Recaptcha.RecaptchaV2(recaptchaKey, recaptchaSecret, { checkremoteip: true }) : null;
         const hCaptcha = hCaptchaKey && hCaptchaSecret;
+        const limiter = rateLimit(setDefaultLimits(options?.limiter || {}));
 
         const throwIfUndefined = <T>(value: T | undefined, errorMessage: string): T => {
             if (value === undefined) {
@@ -146,7 +175,7 @@ export default class Web {
             res.status(400);
             res.render('result',
                 {
-                    dark : !!req.query.dark,
+                    dark: !!req.query.dark,
                     header: 'Error',
                     text: 'There was something wrong with the form you submitted. Go back and try again.'
                 },
@@ -198,7 +227,7 @@ export default class Web {
         }
 
         if (recaptchaKey) {
-            app.post('/', (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res) => {
+            app.post('/', limiter, (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res) => {
                 if (!!req.recaptcha && !req.recaptcha.error) {
                     sendMail(req, res);
                 }
@@ -207,8 +236,8 @@ export default class Web {
                 }
             });
         }
-        else if(hCaptcha) {
-            app.post('/', async (req, res) => {
+        else if (hCaptcha) {
+            app.post('/', limiter, async (req, res) => {
                 const data = await HCaptcha.verify(hCaptchaSecret, req?.body['h-captcha-response']);
                 if (data.success === true) {
                     sendMail(req, res);
@@ -219,7 +248,7 @@ export default class Web {
             });
         }
         else {
-            app.post('/', sendMail);
+            app.post('/', limiter, sendMail);
         }
 
         app.get('/healthcheck', (_, res) => {

@@ -23,13 +23,14 @@ Add a contact form to your Ghost site without a subscription! Supports captchas 
 ## Install and run
 
 ```bash
-bun install
+npm install
+npm run build
 ```
 
 To run:
 
 ```bash
-bun run index.ts [path/to/config.json5]
+npm run start
 ```
 
 A docker image `ghcr.io/corysanin/seance` is provided. A list of tags is available [here](https://github.com/CorySanin/seance/pkgs/container/seance/versions?filters%5Bversion_type%5D=tagged). 
@@ -62,6 +63,8 @@ Seance takes a JSON or JSON5 config file (default location is config/config.json
     recipientAddress: string,
     // The subject prefix for all mail sent using this form. Default is "Form submission"
     subject: string,
+    // Options for express-rate-limit
+    limiter: LimiterOptions
 }
 ```
 
