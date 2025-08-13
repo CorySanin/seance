@@ -10,8 +10,6 @@ import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 import type { Options as LimiterOptions } from 'express-rate-limit';
 
-const CSPNONCE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
 interface ContactFormForGhostConfig {
     port?: number;
     allowedHosts?: string[];
@@ -33,13 +31,16 @@ function notStupidParseInt(v: string | undefined): number {
     return v === undefined ? NaN : parseInt(v);
 }
 
-function genNonceForCSP(length: number = 16): string {
-    let bytes = crypto.randomBytes(length);
-    let chars = [];
-    for (let i = 0; i < bytes.length; i++) {
-        chars.push(CSPNONCE[bytes[i] % CSPNONCE.length]);
-    }
-    return chars.join('');
+function cspGen(_: express.Request, res: express.Response, next: express.NextFunction) {
+    crypto.randomBytes(32, (err, randomBytes) => {
+        if (err) {
+            console.error(err);
+            next(err);
+        } else {
+            res.locals.cspNonce = randomBytes.toString("hex");
+            next();
+        }
+    });
 }
 
 function setDefaultLimits(options: Partial<LimiterOptions>): Partial<LimiterOptions> {
@@ -105,10 +106,11 @@ export default class Web {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use('/assets', express.static('assets'));
+        app.use(cspGen);
 
         app.get('/', (req, res) => {
-            const nonce = genNonceForCSP();
             const domain = `${req.protocol}://${req.headers.host}`;
+            const nonce = res.locals.cspNonce;
             res.render('index',
                 {
                     nonce,
