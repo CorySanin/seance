@@ -2,26 +2,26 @@
   "name": "seance-for-ghost",
   "module": "index.ts",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "GPL-3.0",
   "dependencies": {
     "body-parser": "2.2.0",
     "ejs": "3.1.10",
-    "nodemailer": "7.0.7",
+    "nodemailer": "7.0.9",
     "express": "5.1.0",
-    "express-rate-limit": "8.0.1",
+    "express-rate-limit": "8.1.0",
     "express-recaptcha": "5.1.0",
     "hcaptcha": "0.2.0",
     "json5": "2.2.3"
   },
   "devDependencies": {
-    "@types/node": "^24.2.1",
+    "@types/node": "^24.7.1",
     "@types/express": "5.0.3",
-    "@types/nodemailer": "6.4.17",
-    "forking-build-shit": "1.0.0"
+    "@types/nodemailer": "7.0.2",
+    "forking-build-shit": "1.0.4"
   },
   "peerDependencies": {
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "build": "npx tsc && npx build-shit",
