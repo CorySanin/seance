@@ -177,6 +177,8 @@ jobs:
       
       - name: Remove intermediate images
         if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo "deleting tags that match '${{ env.TAG }}'"
           VERSION_ID=$(gh api /user/packages/container/${{ env.REPOSITORY }}/versions \
