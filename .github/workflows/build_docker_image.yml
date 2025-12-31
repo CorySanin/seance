@@ -56,6 +56,8 @@ jobs:
 
       - name: Build and push release Docker image
         uses: docker/build-push-action@v6
+        env:
+          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
         with:
           target: deploy
           push: true
@@ -91,6 +93,8 @@ jobs:
 
       - name: Build and push release Docker image
         uses: docker/build-push-action@v6
+        env:
+          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
         with:
           target: deploy
           push: true
