@@ -10,7 +10,7 @@ on:
 env:
   DH_REGISTRY: docker.io
   GH_REGISTRY: ghcr.io
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
   TAG: ${{ github.sha }}-${{ github.run_id }}
 
 jobs:
