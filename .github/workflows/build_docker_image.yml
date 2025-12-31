@@ -136,27 +136,31 @@ jobs:
       - name: Define release tag patterns
         if: "startsWith(github.ref, 'refs/tags/v')"
         run: |
-          cat << EOF >> "$GITHUB_ENV"
-          PIMAGES=${{ env.DOCKER_USERNAME }}/${{ env.REPOSITORY }}
-          ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}
-          EOF
-          cat << EOF >> "$GITHUB_ENV"
-          PTAGS=type=raw,value=latest
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=semver,pattern={{major}}
-          EOF
+          {
+            echo "PIMAGES<<EOF"
+            echo "${{ env.DOCKER_USERNAME }}/${{ env.REPOSITORY }}"
+            echo "${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}"
+            echo "EOF"
+            echo "PTAGS<<EOF"
+            echo "type=raw,value=latest"
+            echo "type=semver,pattern={{version}}"
+            echo "type=semver,pattern={{major}}.{{minor}}"
+            echo "type=semver,pattern={{major}}"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
       
       - name: Define develop tag patterns
         if: "!startsWith(github.ref, 'refs/tags/v')"
         run: |
-          cat << EOF >> "$GITHUB_ENV"
-          PIMAGES=${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}
-          EOF
-          cat << EOF >> "$GITHUB_ENV"
-          PTAGS=type=ref,event=branch
-          type=ref,event=pr
-          EOF
+          {
+            echo "PIMAGES<<EOF"
+            echo "${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}""
+            echo "EOF"
+            echo "PTAGS<<EOF"
+            echo "type=ref,event=branch"
+            echo "type=ref,event=pr"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
       
       - name: Extract metadata for Docker image
         id: meta
