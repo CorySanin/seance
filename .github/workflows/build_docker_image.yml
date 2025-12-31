@@ -57,7 +57,7 @@ jobs:
       - name: Build and push release Docker image
         uses: docker/build-push-action@v6
         with:
-          target: true
+          target: deploy
           push: true
           tags: ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}-x86
           labels: ${{ steps.meta.outputs.labels }}
@@ -92,7 +92,7 @@ jobs:
       - name: Build and push release Docker image
         uses: docker/build-push-action@v6
         with:
-          target: true
+          target: deploy
           push: true
           tags: ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}-ARM
           labels: ${{ steps.meta.outputs.labels }}
