@@ -10,18 +10,35 @@ on:
 env:
   DH_REGISTRY: docker.io
   GH_REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  REPOSITORY: ${{ github.event.repository.name }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   TAG: ${{ github.sha }}-${{ github.run_id }}
 
 jobs:
+  lowercasify:
+    runs-on: ubuntu-24.04
+    outputs:
+      image_name: ${{ steps.image.outputs.image_name }}
+      repo_name: ${{ steps.repo.outputs.repo_name }}
+    steps:
+      - name: Lowercase image name
+        id: image
+        run: |
+          echo "image_name=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+      - name: Lowercase repo name
+        id: repo
+        run: |
+          echo "repo_name=$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
   build_x86_image:
     name: Build x86-64 Docker image
     runs-on: ubuntu-24.04
+    needs:
+      - lowercasify
     permissions:
       contents: read
       packages: write
+    env:
+      IMAGE_NAME: ${{ needs.lowercasify.outputs.image_name }}
 
     steps:
       - name: Checkout
@@ -50,9 +67,13 @@ jobs:
   build_arm_image:
     name: Build ARM Docker image
     runs-on: ubuntu-24.04-arm
+    needs:
+      - lowercasify
     permissions:
       contents: read
       packages: write
+    env:
+      IMAGE_NAME: ${{ needs.lowercasify.outputs.image_name }}
 
     steps:
       - name: Checkout
@@ -79,13 +100,18 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ github.workflow }}
   
   combine-images:
+    name: Combine Docker images
     runs-on: ubuntu-24.04
     needs:
+      - lowercasify
       - build_x86_image
       - build_arm_image
     permissions:
       contents: read
       packages: write
+    env:
+      IMAGE_NAME: ${{ needs.lowercasify.outputs.image_name }}
+      REPOSITORY: ${{ needs.lowercasify.outputs.repo_name }}
 
     steps:
       - name: Login to GitHub Container Registry
