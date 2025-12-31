@@ -174,3 +174,16 @@ jobs:
           sources: |
             ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}-x86
             ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}-ARM
+      
+      - name: Remove intermediate images
+        if: always()
+        run: |
+          echo "deleting tags that match '${{ env.TAG }}'"
+          VERSION_ID=$(gh api /user/packages/container/${{ env.REPOSITORY }}/versions \
+            --jq '.[] | select(.metadata.container.tags[] == "${{ env.TAG }}-x86") | .id')
+          gh api --method DELETE \
+            /user/packages/container/${{ env.REPOSITORY }}/versions/$VERSION_ID
+          VERSION_ID=$(gh api /user/packages/container/${{ env.REPOSITORY }}/versions \
+            --jq '.[] | select(.metadata.container.tags[] == "${{ env.TAG }}-ARM") | .id')
+          gh api --method DELETE \
+            /user/packages/container/${{ env.REPOSITORY }}/versions/$VERSION_ID
