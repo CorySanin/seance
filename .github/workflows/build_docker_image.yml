@@ -11,10 +11,11 @@ env:
   DH_REGISTRY: docker.io
   GH_REGISTRY: ghcr.io
   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
-  TAG: ${{ github.sha }}-${{ github.run_id }}
+  TAG: sha-${{ github.sha }}
 
 jobs:
   lowercasify:
+    permissions: {}
     runs-on: ubuntu-24.04
     outputs:
       image_name: ${{ steps.image.outputs.image_name }}
@@ -72,9 +73,6 @@ jobs:
           target: deploy
           push: true
           tags: ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}-${{ matrix.arch }}
-          labels: |
-            org.opencontainers.image.ci-run-id=${{ github.run_id }}
-            org.opencontainers.image.revision=${{ github.sha }}
           cache-from: type=gha,scope=${{ github.workflow }}
           cache-to: type=gha,mode=max,scope=${{ github.workflow }}
   
@@ -152,18 +150,3 @@ jobs:
           sources: |
             ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}-x86
             ${{ env.GH_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}-ARM
-      
-      - name: Remove intermediate images
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "deleting tags that match '${{ env.TAG }}'"
-          VERSION_ID=$(gh api /user/packages/container/${{ env.REPOSITORY }}/versions \
-            --jq '.[] | select(.metadata.container.tags[] == "${{ env.TAG }}-x86") | .id')
-          gh api --method DELETE \
-            /user/packages/container/${{ env.REPOSITORY }}/versions/$VERSION_ID
-          VERSION_ID=$(gh api /user/packages/container/${{ env.REPOSITORY }}/versions \
-            --jq '.[] | select(.metadata.container.tags[] == "${{ env.TAG }}-ARM") | .id')
-          gh api --method DELETE \
-            /user/packages/container/${{ env.REPOSITORY }}/versions/$VERSION_ID
