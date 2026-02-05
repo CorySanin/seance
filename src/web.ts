@@ -1,14 +1,12 @@
 import * as http from "http";
 import crypto from 'crypto';
 import type { Express } from "express";
-import express, { application } from 'express';
-import { rateLimit, MemoryStore } from 'express-rate-limit';
-import bodyParser from 'body-parser';
+import express from 'express';
+import { rateLimit, MemoryStore, type Options as LimiterOptions } from 'express-rate-limit';
 import Recaptcha from 'express-recaptcha';
 import * as HCaptcha from 'hcaptcha';
 import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
-import type { Options as LimiterOptions } from 'express-rate-limit';
 
 interface ContactFormForGhostConfig {
     port?: number;
@@ -35,10 +33,10 @@ function cspGen(_: express.Request, res: express.Response, next: express.NextFun
     crypto.randomBytes(32, (err, randomBytes) => {
         if (err) {
             console.error(err);
-            next(err);
+            next && next(err);
         } else {
             res.locals.cspNonce = randomBytes.toString("hex");
-            next();
+            next && next();
         }
     });
 }
@@ -88,6 +86,7 @@ export default class Web {
         const recaptcha = (recaptchaKey && recaptchaSecret) ? new Recaptcha.RecaptchaV2(recaptchaKey, recaptchaSecret, { checkremoteip: true }) : null;
         const hCaptcha = hCaptchaKey && hCaptchaSecret;
         const limiter = rateLimit(setDefaultLimits(options?.limiter || {}));
+        const formParser = express.urlencoded({ extended: true });
 
         const throwIfUndefined = <T>(value: T | undefined, errorMessage: string): T => {
             if (value === undefined) {
@@ -103,8 +102,6 @@ export default class Web {
         app.set('trust proxy', 1);
         app.set('view engine', 'ejs');
         app.set('view options', VIEWOPTIONS);
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
         app.use('/assets', express.static('assets'));
         app.use(cspGen);
 
@@ -173,7 +170,7 @@ export default class Web {
             }
         }
 
-        const sendError = (req: express.Request, res: express.Response, next?: express.NextFunction) => {
+        const sendError = (req: express.Request, res: express.Response) => {
             res.status(400);
             res.render('result',
                 {
@@ -183,11 +180,9 @@ export default class Web {
                 },
                 createPageRenderer(res)
             );
-
-            next && next();
         }
 
-        const sendMail = async (req: express.Request, res: express.Response, next?: express.NextFunction) => {
+        const sendMail = async (req: express.Request, res: express.Response) => {
             const renderPage = createPageRenderer(res);
             const dark = req?.query?.dark && req.query.dark != 'false';
             if (req?.body?.email && req.body.name && req.body.message && emailValidator.test(req.body.email)) {
@@ -222,16 +217,16 @@ export default class Web {
                 }
             }
             else {
-                sendError(req, res, next);
+                console.error('Form data failed to validate:', req.body);
+                sendError(req, res);
             }
-
-            next && next();
         }
 
+        app.post('/', limiter, formParser);
         if (recaptchaKey) {
-            app.post('/', limiter, (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res) => {
+            app.post('/', (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res, next) => {
                 if (!!req.recaptcha && !req.recaptcha.error) {
-                    sendMail(req, res);
+                    next();
                 }
                 else {
                     sendError(req, res);
@@ -239,19 +234,17 @@ export default class Web {
             });
         }
         else if (hCaptcha) {
-            app.post('/', limiter, async (req, res) => {
+            app.post('/', async (req, res, next) => {
                 const data = await HCaptcha.verify(hCaptchaSecret, req?.body['h-captcha-response']);
                 if (data.success === true) {
-                    sendMail(req, res);
+                    next();
                 }
                 else {
                     sendError(req, res);
                 }
             });
         }
-        else {
-            app.post('/', limiter, sendMail);
-        }
+        app.post('/', sendMail);
 
         app.get('/healthcheck', (_, res) => {
             res.send('Healthy');
