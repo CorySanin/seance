@@ -4,7 +4,7 @@
 <head>
     <%- include("head", locals) %>
     <link rel="alternate" type="application/json+oembed"
-    href="<%= domain %>/services/oembed?url=<%= encodeURIComponent(url) %>&format=json"
+    href="<%= domain %><%= prefix %>/services/oembed?url=<%= encodeURIComponent(url) %>&format=json"
     title="Contact form" />
 
     <% if (locals.recaptcha) { %>
@@ -34,7 +34,7 @@
             </form>
         </div>
     </div>
-    <script nonce="<%= nonce %>" src="/assets/js/form.js" defer></script>
+    <script nonce="<%= nonce %>" src="<%= prefix %>/assets/js/form.js" defer></script>
 </body>
 
 </html>

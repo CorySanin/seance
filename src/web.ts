@@ -20,6 +20,7 @@ interface ContactFormForGhostConfig {
     recipientAddress?: string;
     subject?: string;
     limiter?: Partial<LimiterOptions>;
+    prefix?: string;
 }
 
 /**
@@ -41,7 +42,7 @@ function cspGen(_: express.Request, res: express.Response, next: express.NextFun
     });
 }
 
-function setDefaultLimits(options: Partial<LimiterOptions>): Partial<LimiterOptions> {
+function setDefaultLimits(options: Partial<LimiterOptions>, prefix: string): Partial<LimiterOptions> {
     options.windowMs ||= 50000;
     options.limit ||= 3;
     options.legacyHeaders ||= false;
@@ -50,6 +51,7 @@ function setDefaultLimits(options: Partial<LimiterOptions>): Partial<LimiterOpti
     options.message = (req: express.Request, res: express.Response) => {
         return new Promise((resolve, reject) => {
             res.render('rate-limit', {
+                prefix,
                 text: messageText,
                 dark: req?.query?.dark && req.query.dark != 'false'
             }, (err, html) => {
@@ -72,10 +74,12 @@ export default class Web {
 
     constructor(options: ContactFormForGhostConfig = {}) {
         const app: Express = express();
+        const router = express.Router();
         const port: number = notStupidParseInt(process.env.PORT) || options['port'] as number || 8080;
         const VIEWOPTIONS = {
             outputFunctionName: 'echo'
         };
+        const prefix = options.prefix || '';
         const allowedHosts = (process.env.ALLOWEDHOSTS || (options.allowedHosts || ['*']).join(' '));
         const emailValidator = /^[^@\s]+@[^@.\s]+\.[^@\s]+$/;
         const emailTransport = nodemailer.createTransport(options.smtp);
@@ -85,7 +89,7 @@ export default class Web {
         const hCaptchaSecret = process.env.HCAPTCHASECRET || options.hCaptchaSecret;
         const recaptcha = (recaptchaKey && recaptchaSecret) ? new Recaptcha.RecaptchaV2(recaptchaKey, recaptchaSecret, { checkremoteip: true }) : null;
         const hCaptcha = hCaptchaKey && hCaptchaSecret;
-        const limiter = rateLimit(setDefaultLimits(options?.limiter || {}));
+        const limiter = rateLimit(setDefaultLimits(options?.limiter || {}, prefix));
         const formParser = express.urlencoded({ extended: true });
 
         const throwIfUndefined = <T>(value: T | undefined, errorMessage: string): T => {
@@ -102,15 +106,16 @@ export default class Web {
         app.set('trust proxy', 1);
         app.set('view engine', 'ejs');
         app.set('view options', VIEWOPTIONS);
-        app.use('/assets', express.static('assets'));
-        app.use(cspGen);
+        router.use('/assets', express.static('assets'));
+        router.use(cspGen);
 
-        app.get('/', (req, res) => {
+        router.get('/', (req, res) => {
             const domain = `${req.protocol}://${req.headers.host}`;
             const nonce = res.locals.cspNonce;
             res.render('index',
                 {
                     nonce,
+                    prefix,
                     recaptcha: recaptchaKey,
                     hCaptcha: hCaptchaKey,
                     domain,
@@ -129,7 +134,7 @@ export default class Web {
                 });
         });
 
-        app.get('/services/oembed{/}', (req, res) => {
+        router.get('/services/oembed{/}', (req, res) => {
             const defaultWidth = 720;
             const defaultHeight = 600;
             const urlParam = req.query?.url;
@@ -174,6 +179,7 @@ export default class Web {
             res.status(400);
             res.render('result',
                 {
+                    prefix,
                     dark: !!req.query.dark,
                     header: 'Error',
                     text: 'There was something wrong with the form you submitted. Go back and try again.'
@@ -196,6 +202,7 @@ export default class Web {
                     }));
                     res.render('result',
                         {
+                            prefix,
                             dark,
                             header: 'Message sent',
                             text: 'Your message has been received. Thank you!'
@@ -208,6 +215,7 @@ export default class Web {
                     res.status(500);
                     res.render('result',
                         {
+                            prefix,
                             dark,
                             header: 'Error',
                             text: 'An error occurred while attempting to deliver your message. Try again later.'
@@ -222,7 +230,7 @@ export default class Web {
             }
         }
 
-        app.post('/', limiter, formParser);
+        router.post('/', limiter, formParser);
         if (recaptchaKey) {
             app.post('/', (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res, next) => {
                 if (!!req.recaptcha && !req.recaptcha.error) {
@@ -234,7 +242,7 @@ export default class Web {
             });
         }
         else if (hCaptcha) {
-            app.post('/', async (req, res, next) => {
+            router.post('/', async (req, res, next) => {
                 const data = await HCaptcha.verify(hCaptchaSecret, req?.body['h-captcha-response']);
                 if (data.success === true) {
                     next();
@@ -244,11 +252,13 @@ export default class Web {
                 }
             });
         }
-        app.post('/', sendMail);
+        router.post('/', sendMail);
 
-        app.get('/healthcheck', (_, res) => {
+        router.get('/healthcheck', (_, res) => {
             res.send('Healthy');
         });
+
+        app.use(prefix, router);
 
         this._webserver = app.listen(port, () => console.log(`seance running on port ${port}`));
 

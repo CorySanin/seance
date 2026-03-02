@@ -44,6 +44,9 @@ Seance takes a JSON or JSON5 config file (default location is config/config.json
 {
     // The port the web server will run on (default 8080)
     "port": number,
+    // URL prefix, for example: '/seance'
+    // Useful for using reverse proxy to use a single domain
+    "prefix": string
     // Array of hosts allowed to embed the contact form.
     // Default is to allow all (not recommended)
     allowedHosts: string[],
