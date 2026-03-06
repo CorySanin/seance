@@ -7,7 +7,7 @@
   "dependencies": {
     "ejs": "4.0.1",
     "express": "5.2.1",
-    "express-rate-limit": "8.2.1",
+    "express-rate-limit": "8.2.2",
     "express-recaptcha": "5.1.0",
     "hcaptcha": "0.2.0",
     "json5": "2.2.3",
