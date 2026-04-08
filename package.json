@@ -11,7 +11,7 @@
     "express-recaptcha": "5.1.0",
     "hcaptcha": "0.2.0",
     "json5": "2.2.3",
-    "nodemailer": "^7.0.12"
+    "nodemailer": "^8.0.5"
   },
   "devDependencies": {
     "@types/express": "5.0.6",
