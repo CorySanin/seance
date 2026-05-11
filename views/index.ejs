@@ -11,6 +11,8 @@
         <script nonce="<%= nonce %>" src="https://www.google.com/recaptcha/api.js" async defer></script>
     <% } else if (locals.hCaptcha) { %>
         <script nonce="<%= nonce %>" src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <% } else if (locals.cap) { %>
+        <script nonce="<%= nonce %>" src="<%= prefix %>/assets/js/cap.min.js"></script>
     <% } %>
 </head>
 
@@ -28,8 +30,11 @@
                 <div class="second-col g-recaptcha" data-sitekey="<%= recaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
                 <% } else if (locals.hCaptcha) { %>
                 <div class="second-col h-captcha" data-sitekey="<%= hCaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
+                <% } else if (locals.cap) { %>
+                <cap-widget class="second-col cap" id="cap" required data-cap-api-endpoint="<%= cap %>"></cap-widget>
+                <input class="display-none" name="cap-token" id="cap-token" type="text" />
                 <% } %>
-                <div class="second-col"><input id="sendBtn" type="submit" value="Send" <% if (recaptcha || hCaptcha) { %>disabled<% } %>></div>
+                <div class="second-col"><input id="sendBtn" type="submit" value="Send" <% if (recaptcha || hCaptcha || cap) { %>disabled<% } %>></div>
                 <div class="second-col"><%- include("powered-by", locals) %></div>
             </form>
         </div>

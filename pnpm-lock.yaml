@@ -42,6 +42,9 @@ importers:
       '@types/nodemailer':
         specifier: 8.0.0
         version: 8.0.0
+      cap-widget:
+        specifier: ^0.1.50
+        version: 0.1.50
       forking-build-shit:
         specifier: 1.1.3
         version: 1.1.3
@@ -188,6 +191,9 @@ packages:
   call-bound@1.0.4:
     resolution: {integrity: sha512-+ys997U96po4Kx/ABpBCqhA9EuxJaQWDQg7295H4hBphv3IZg0boBKuwYpt4YXp6MZ5AmZQnU/tyMTlRpaSejg==}
     engines: {node: '>= 0.4'}
+
+  cap-widget@0.1.50:
+    resolution: {integrity: sha512-kNmqBjf6f6IGdYwisrEtF2BurE0irjHGelTaMjRpFUPQbqW1hXVPq1u0WQYUWT8ZndRTFT9koCUifmp7FIANUQ==}
 
   chokidar@4.0.3:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
@@ -659,6 +665,8 @@ snapshots:
     dependencies:
       call-bind-apply-helpers: 1.0.2
       get-intrinsic: 1.3.0
+
+  cap-widget@0.1.50: {}
 
   chokidar@4.0.3:
     dependencies:

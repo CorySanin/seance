@@ -25,4 +25,9 @@
     window.unblockSend = function () {
         sendBtn.disabled = false;
     }
+
+    document.getElementById('cap')?.addEventListener("solve", e => {
+        document.getElementById('cap-token').value = e.detail.token;
+        unblockSend();
+    });
 })();
