@@ -97,6 +97,10 @@ button,
     border-radius: 2px;
 }
 
+.display-none {
+    display: none;
+}
+
 @media screen and (max-width: 400px) {
     .form {
         grid-template-columns: 1fr;
