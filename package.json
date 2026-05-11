@@ -23,8 +23,9 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "build": "npx tsc && npx build-shit",
-    "watch": "npx build-shit --watch",
+    "build": "tsc && build-shit",
+    "watch": "build-shit --watch",
     "start": "node ./distribution/index.js"
-  }
+  },
+  "packageManager": "pnpm@10.33.0"
 }
