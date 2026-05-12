@@ -25,4 +25,8 @@
     window.unblockSend = function () {
         sendBtn.disabled = false;
     }
+
+    document.getElementById('cap')?.addEventListener("solve", _ => {
+        unblockSend();
+    });
 })();

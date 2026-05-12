@@ -1,6 +1,7 @@
 :root {
     --foreground: #212121;
     --inputbg: #EEEEEE;
+    --intensebg: #fff;
     --inputborder: #BDBDBD;
     --subtle: #616161;
     --link: #3949AB;
@@ -9,9 +10,20 @@
 body.dark {
     --foreground: #EEEEEE;
     --inputbg: #212121;
+    --intensebg: #000;
     --inputborder: #616161;
     --subtle: #BDBDBD;
     --link: #7986CB;
+}
+
+cap-widget {
+    --cap-background: var(--inputbg);
+    --cap-border-color: var(--inputborder);
+    --cap-color: var(--foreground);
+    --cap-checkbox-border: 1px solid var(--inputborder);
+    --cap-checkbox-background: var(--intensebg);
+    --cap-spinner-color: var(--link);
+    --cap-spinner-background-color: var(--inputborder);
 }
 
 html,
@@ -35,7 +47,7 @@ button,
     &:hover {
         border-color: var(--foreground);
     }
-    
+
     &:disabled,
     &[disabled],
     &[readonly] {

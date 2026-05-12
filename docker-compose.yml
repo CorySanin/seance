@@ -1,14 +1,16 @@
 version: '2'
 
 services:
-    seance:
-        container_name: seance
-        #image: corysanin/seance:latest
-        build:
-            context: ./
-            dockerfile: Dockerfile
-        restart: "always"
-        ports:
-            - 8080:8080
-        volumes:
-            - ./config:/usr/src/seance/config:ro
+  seance:
+    container_name: seance
+    #image: corysanin/seance:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: "always"
+    ports:
+      - 8080:8080
+    volumes:
+      - ./config:/usr/src/seance/config:ro
+  
+  

@@ -6,6 +6,7 @@ import { rateLimit, MemoryStore, type Options as LimiterOptions } from 'express-
 import Recaptcha from 'express-recaptcha';
 import * as HCaptcha from 'hcaptcha';
 import nodemailer from "nodemailer";
+import { CapClient } from 'cap-client';
 import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 
 interface ContactFormForGhostConfig {
@@ -15,6 +16,10 @@ interface ContactFormForGhostConfig {
     recaptchaSecret?: string;
     hCaptchaKey?: string;
     hCaptchaSecret?: string;
+    capKey?: string;
+    capSecret?: string;
+    capInstance?: string;
+    capInstancePublic?: string;
     smtp?: SMTPTransport | SMTPTransport.Options;
     senderAddress?: string;
     recipientAddress?: string;
@@ -68,6 +73,31 @@ function setDefaultLimits(options: Partial<LimiterOptions>, prefix: string): Par
     return options;
 }
 
+function createCSP(options: {
+    allowedHosts: string,
+    nonce: string,
+    cap: boolean,
+    recaptcha: boolean,
+    hcaptcha: boolean
+}) {
+    const fragments: string[] = [];
+    fragments.push(`frame-ancestors 'self' ${options.allowedHosts}; `);
+    fragments.push('connect-src \'self\' *; ');
+    fragments.push(`script-src 'self' 'nonce-${options.nonce}'`);
+    if (options.cap) {
+        fragments.push(' https://cdn.jsdelivr.net \'unsafe-eval\'; ');
+        fragments.push('worker-src \'self\' blob: \'wasm-unsafe-eval\'; media-src data:; img-src \'self\' data:');
+    }
+    else if (options.hcaptcha) {
+        fragments.push(' https://*.hcaptcha.com');
+    }
+    else if (options.recaptcha) {
+        fragments.push(' https://www.google.com');
+    }
+    fragments.push(`; style-src 'self' 'nonce-${options.nonce}';`);
+    return fragments.join('');
+}
+
 
 export default class Web {
     private _webserver: http.Server | null = null;
@@ -85,12 +115,21 @@ export default class Web {
         const emailTransport = nodemailer.createTransport(options.smtp);
         const recaptchaKey = process.env.RECAPTCHAKEY || options.recaptchaKey;
         const hCaptchaKey = process.env.HCAPTCHAKEY || options.hCaptchaKey;
+        const capKey = process.env.CAPKEY || options.capKey;
         const recaptchaSecret = process.env.RECAPTCHASECRET || options.recaptchaSecret;
         const hCaptchaSecret = process.env.HCAPTCHASECRET || options.hCaptchaSecret;
+        const capSecret = process.env.CAPSECRET || options.capSecret;
         const recaptcha = (recaptchaKey && recaptchaSecret) ? new Recaptcha.RecaptchaV2(recaptchaKey, recaptchaSecret, { checkremoteip: true }) : null;
         const hCaptcha = hCaptchaKey && hCaptchaSecret;
+        const capInstance = process.env.CAPINSTANCE || options.capInstance;
+        const capInstancePublic = process.env.CAPINSTANCEPUBLIC || options.capInstancePublic || capInstance;
+        const capClient = capKey && capSecret && capInstance && new CapClient({
+            instance: capInstance,
+            key: capKey,
+            secret: capSecret
+        });
         const limiter = rateLimit(setDefaultLimits(options?.limiter || {}, prefix));
-        const formParser = express.urlencoded({ extended: true });
+        const formParser = express.urlencoded({ extended: true, type: ['application/x-www-form-urlencoded', 'text/html'] });
 
         const throwIfUndefined = <T>(value: T | undefined, errorMessage: string): T => {
             if (value === undefined) {
@@ -118,13 +157,20 @@ export default class Web {
                     prefix,
                     recaptcha: recaptchaKey,
                     hCaptcha: hCaptchaKey,
+                    cap: capClient && `${capInstancePublic}/${capKey}/`,
                     domain,
                     url: `${domain}${req.url}`,
                     dark: req?.query?.dark && req.query.dark != 'false'
                 },
                 function (err, html) {
                     if (!err) {
-                        res.set('Content-Security-Policy', `frame-ancestors 'self' ${allowedHosts}; default-src 'self' https://www.google.com https://*.hcaptcha.com; connect-src 'self' *; script-src 'self' 'nonce-${nonce}'`);
+                        res.set('Content-Security-Policy', createCSP({
+                            nonce,
+                            allowedHosts,
+                            cap: !!capClient,
+                            recaptcha: !!recaptcha,
+                            hcaptcha: !!hCaptcha
+                        }));
                         res.send(html);
                     }
                     else {
@@ -165,7 +211,13 @@ export default class Web {
         const createPageRenderer = (res: express.Response) => {
             return (err: Error, html: string) => {
                 if (!err) {
-                    res.set('Content-Security-Policy', `frame-ancestors 'self' ${allowedHosts}; default-src 'self'; connect-src 'self' *; script-src 'self';`);
+                    res.set('Content-Security-Policy', createCSP({
+                        nonce: res.locals.cspNonce,
+                        allowedHosts,
+                        cap: !!capClient,
+                        recaptcha: !!recaptcha,
+                        hcaptcha: !!hCaptcha
+                    }));
                     res.send(html);
                 }
                 else {
@@ -232,7 +284,7 @@ export default class Web {
 
         router.post('/', limiter, formParser);
         if (recaptchaKey) {
-            app.post('/', (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res, next) => {
+            router.post('/', (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res, next) => {
                 if (!!req.recaptcha && !req.recaptcha.error) {
                     next();
                 }
@@ -245,6 +297,16 @@ export default class Web {
             router.post('/', async (req, res, next) => {
                 const data = await HCaptcha.verify(hCaptchaSecret, req?.body['h-captcha-response']);
                 if (data.success === true) {
+                    next();
+                }
+                else {
+                    sendError(req, res);
+                }
+            });
+        }
+        else if (capClient) {
+            router.post('/', capClient.middleware, (req, res, next) => {
+                if (req.capResponse) {
                     next();
                 }
                 else {
