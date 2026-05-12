@@ -5,6 +5,7 @@
   "version": "1.2.2",
   "license": "GPL-3.0",
   "dependencies": {
+    "cap-client": "^0.0.2",
     "ejs": "5.0.1",
     "express": "5.2.1",
     "express-rate-limit": "8.3.2",

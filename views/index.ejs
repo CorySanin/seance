@@ -32,7 +32,6 @@
                 <div class="second-col h-captcha" data-sitekey="<%= hCaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
                 <% } else if (locals.cap) { %>
                 <cap-widget class="second-col cap" id="cap" required data-cap-api-endpoint="<%= cap %>"></cap-widget>
-                <input class="display-none" name="cap-token" id="cap-token" type="text" />
                 <% } %>
                 <div class="second-col"><input id="sendBtn" type="submit" value="Send" <% if (recaptcha || hCaptcha || cap) { %>disabled<% } %>></div>
                 <div class="second-col"><%- include("powered-by", locals) %></div>

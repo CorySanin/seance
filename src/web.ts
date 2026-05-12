@@ -6,6 +6,7 @@ import { rateLimit, MemoryStore, type Options as LimiterOptions } from 'express-
 import Recaptcha from 'express-recaptcha';
 import * as HCaptcha from 'hcaptcha';
 import nodemailer from "nodemailer";
+import { CapClient } from 'cap-client';
 import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 
 interface ContactFormForGhostConfig {
@@ -15,6 +16,9 @@ interface ContactFormForGhostConfig {
     recaptchaSecret?: string;
     hCaptchaKey?: string;
     hCaptchaSecret?: string;
+    capKey?: string;
+    capSecret?: string;
+    capInstance?: string;
     smtp?: SMTPTransport | SMTPTransport.Options;
     senderAddress?: string;
     recipientAddress?: string;
@@ -85,12 +89,20 @@ export default class Web {
         const emailTransport = nodemailer.createTransport(options.smtp);
         const recaptchaKey = process.env.RECAPTCHAKEY || options.recaptchaKey;
         const hCaptchaKey = process.env.HCAPTCHAKEY || options.hCaptchaKey;
+        const capKey = process.env.CAPKEY || options.capKey;
         const recaptchaSecret = process.env.RECAPTCHASECRET || options.recaptchaSecret;
         const hCaptchaSecret = process.env.HCAPTCHASECRET || options.hCaptchaSecret;
+        const capSecret = process.env.CAPSECRET || options.capSecret;
         const recaptcha = (recaptchaKey && recaptchaSecret) ? new Recaptcha.RecaptchaV2(recaptchaKey, recaptchaSecret, { checkremoteip: true }) : null;
         const hCaptcha = hCaptchaKey && hCaptchaSecret;
+        const capInstance = process.env.CAPINSTANCE || options.capInstance;
+        const capClient = capKey && capSecret && capInstance && new CapClient({
+            instance: capInstance,
+            key: capKey,
+            secret: capSecret
+        });
         const limiter = rateLimit(setDefaultLimits(options?.limiter || {}, prefix));
-        const formParser = express.urlencoded({ extended: true });
+        const formParser = express.urlencoded({ extended: true, type: ['application/x-www-form-urlencoded', 'text/html'] });
 
         const throwIfUndefined = <T>(value: T | undefined, errorMessage: string): T => {
             if (value === undefined) {
@@ -118,6 +130,7 @@ export default class Web {
                     prefix,
                     recaptcha: recaptchaKey,
                     hCaptcha: hCaptchaKey,
+                    cap: capClient && `${capInstance}/${capKey}/`,
                     domain,
                     url: `${domain}${req.url}`,
                     dark: req?.query?.dark && req.query.dark != 'false'
@@ -232,7 +245,7 @@ export default class Web {
 
         router.post('/', limiter, formParser);
         if (recaptchaKey) {
-            app.post('/', (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res, next) => {
+            router.post('/', (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res, next) => {
                 if (!!req.recaptcha && !req.recaptcha.error) {
                     next();
                 }
@@ -245,6 +258,16 @@ export default class Web {
             router.post('/', async (req, res, next) => {
                 const data = await HCaptcha.verify(hCaptchaSecret, req?.body['h-captcha-response']);
                 if (data.success === true) {
+                    next();
+                }
+                else {
+                    sendError(req, res);
+                }
+            });
+        }
+        else if (capClient) {
+            router.post('/', capClient.middleware, (req, res, next) => {
+                if (req.capResponse) {
                     next();
                 }
                 else {
