@@ -12,14 +12,14 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       ejs:
-        specifier: 5.0.1
-        version: 5.0.1
+        specifier: 5.0.2
+        version: 5.0.2
       express:
         specifier: 5.2.1
         version: 5.2.1
       express-rate-limit:
-        specifier: 8.3.2
-        version: 8.3.2(express@5.2.1)
+        specifier: 8.5.1
+        version: 8.5.1(express@5.2.1)
       express-recaptcha:
         specifier: 5.1.0
         version: 5.1.0
@@ -30,7 +30,7 @@ importers:
         specifier: 2.2.3
         version: 2.2.3
       nodemailer:
-        specifier: ^8.0.5
+        specifier: ^8.0.7
         version: 8.0.7
       typescript:
         specifier: ^5.9.3
@@ -254,8 +254,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  ejs@5.0.1:
-    resolution: {integrity: sha512-COqBPFMxuPTPspXl2DkVYaDS3HtrD1GpzOGkNTJ1IYkifq/r9h8SVEFrjA3D9/VJGOEoMQcrlhpntcSUrM8k6A==}
+  ejs@5.0.2:
+    resolution: {integrity: sha512-IpbUaI/CAW86l3f+T8zN0iggSc0LmMZLcIW5eRVStLVNCoTXkE0YlncbbH50fp8Cl6zHIky0sW2uUbhBqGw0Jw==}
     engines: {node: '>=0.12.18'}
     hasBin: true
 
@@ -282,8 +282,8 @@ packages:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
 
-  express-rate-limit@8.3.2:
-    resolution: {integrity: sha512-77VmFeJkO0/rvimEDuUC5H30oqUC4EyOhyGccfqoLebB0oiEYfM7nwPrsDsBL1gsTpwfzX8SFy2MT3TDyRq+bg==}
+  express-rate-limit@8.5.1:
+    resolution: {integrity: sha512-5O6KYmyJEpuPJV5hNTXKbAHWRqrzyu+OI3vUnSd2kXFubIVpG7ezpgxQy76Zo5GQZtrQBg86hF+CM/NX+cioiQ==}
     engines: {node: '>= 16'}
     peerDependencies:
       express: '>= 4.11'
@@ -352,8 +352,8 @@ packages:
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
-  ip-address@10.1.0:
-    resolution: {integrity: sha512-XXADHxXmvT9+CRxhXg56LJovE+bmWnEWB78LB83VZTprKTmaC5QfruXocxzTZ2Kl0DNwKuBdlIhjL8LeY8Sf8Q==}
+  ip-address@10.2.0:
+    resolution: {integrity: sha512-/+S6j4E9AHvW9SWMSEY9Xfy66O5PWvVEJ08O0y5JGyEKQpojb0K0GKpz/v5HJ/G0vi3D2sjGK78119oXZeE0qA==}
     engines: {node: '>= 12'}
 
   ipaddr.js@1.9.1:
@@ -715,7 +715,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  ejs@5.0.1: {}
+  ejs@5.0.2: {}
 
   encodeurl@2.0.0: {}
 
@@ -731,10 +731,10 @@ snapshots:
 
   etag@1.8.1: {}
 
-  express-rate-limit@8.3.2(express@5.2.1):
+  express-rate-limit@8.5.1(express@5.2.1):
     dependencies:
       express: 5.2.1
-      ip-address: 10.1.0
+      ip-address: 10.2.0
 
   express-recaptcha@5.1.0: {}
 
@@ -838,7 +838,7 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  ip-address@10.1.0: {}
+  ip-address@10.2.0: {}
 
   ipaddr.js@1.9.1: {}
 
