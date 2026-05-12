@@ -19,6 +19,7 @@ interface ContactFormForGhostConfig {
     capKey?: string;
     capSecret?: string;
     capInstance?: string;
+    capInstancePublic?: string;
     smtp?: SMTPTransport | SMTPTransport.Options;
     senderAddress?: string;
     recipientAddress?: string;
@@ -72,6 +73,31 @@ function setDefaultLimits(options: Partial<LimiterOptions>, prefix: string): Par
     return options;
 }
 
+function createCSP(options: {
+    allowedHosts: string,
+    nonce: string,
+    cap: boolean,
+    recaptcha: boolean,
+    hcaptcha: boolean
+}) {
+    const fragments: string[] = [];
+    fragments.push(`frame-ancestors 'self' ${options.allowedHosts}; `);
+    fragments.push('connect-src \'self\' *; ');
+    fragments.push(`script-src 'self' 'nonce-${options.nonce}'`);
+    if (options.cap) {
+        fragments.push(' https://cdn.jsdelivr.net \'unsafe-eval\'; ');
+        fragments.push('worker-src \'self\' blob: \'wasm-unsafe-eval\'; media-src data:; img-src \'self\' data:');
+    }
+    else if (options.hcaptcha) {
+        fragments.push(' https://*.hcaptcha.com');
+    }
+    else if (options.recaptcha) {
+        fragments.push(' https://www.google.com');
+    }
+    fragments.push(`; style-src 'self' 'nonce-${options.nonce}';`);
+    return fragments.join('');
+}
+
 
 export default class Web {
     private _webserver: http.Server | null = null;
@@ -96,6 +122,7 @@ export default class Web {
         const recaptcha = (recaptchaKey && recaptchaSecret) ? new Recaptcha.RecaptchaV2(recaptchaKey, recaptchaSecret, { checkremoteip: true }) : null;
         const hCaptcha = hCaptchaKey && hCaptchaSecret;
         const capInstance = process.env.CAPINSTANCE || options.capInstance;
+        const capInstancePublic = process.env.CAPINSTANCEPUBLIC || options.capInstancePublic || capInstance;
         const capClient = capKey && capSecret && capInstance && new CapClient({
             instance: capInstance,
             key: capKey,
@@ -130,14 +157,20 @@ export default class Web {
                     prefix,
                     recaptcha: recaptchaKey,
                     hCaptcha: hCaptchaKey,
-                    cap: capClient && `${capInstance}/${capKey}/`,
+                    cap: capClient && `${capInstancePublic}/${capKey}/`,
                     domain,
                     url: `${domain}${req.url}`,
                     dark: req?.query?.dark && req.query.dark != 'false'
                 },
                 function (err, html) {
                     if (!err) {
-                        res.set('Content-Security-Policy', `frame-ancestors 'self' ${allowedHosts}; default-src 'self' https://www.google.com https://*.hcaptcha.com; connect-src 'self' *; script-src 'self' 'nonce-${nonce}'`);
+                        res.set('Content-Security-Policy', createCSP({
+                            nonce,
+                            allowedHosts,
+                            cap: !!capClient,
+                            recaptcha: !!recaptcha,
+                            hcaptcha: !!hCaptcha
+                        }));
                         res.send(html);
                     }
                     else {
@@ -178,7 +211,13 @@ export default class Web {
         const createPageRenderer = (res: express.Response) => {
             return (err: Error, html: string) => {
                 if (!err) {
-                    res.set('Content-Security-Policy', `frame-ancestors 'self' ${allowedHosts}; default-src 'self'; connect-src 'self' *; script-src 'self';`);
+                    res.set('Content-Security-Policy', createCSP({
+                        nonce: res.locals.cspNonce,
+                        allowedHosts,
+                        cap: !!capClient,
+                        recaptcha: !!recaptcha,
+                        hcaptcha: !!hCaptcha
+                    }));
                     res.send(html);
                 }
                 else {

@@ -12,6 +12,9 @@
     <% } else if (locals.hCaptcha) { %>
         <script nonce="<%= nonce %>" src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <% } else if (locals.cap) { %>
+        <script nonce="<%= nonce %>">
+            window.CAP_CSS_NONCE = '<%= nonce %>';
+        </script>
         <script nonce="<%= nonce %>" src="<%= prefix %>/assets/js/cap.min.js"></script>
     <% } %>
 </head>
