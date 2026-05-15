@@ -85,7 +85,7 @@ function createCSP(options: {
     fragments.push('connect-src \'self\' *; ');
     fragments.push(`script-src 'self' 'nonce-${options.nonce}'`);
     if (options.cap) {
-        fragments.push(' https://cdn.jsdelivr.net \'unsafe-eval\'; ');
+        fragments.push(' \'unsafe-eval\'; ');
         fragments.push('worker-src \'self\' blob: \'wasm-unsafe-eval\'; media-src data:; img-src \'self\' data:');
     }
     else if (options.hcaptcha) {

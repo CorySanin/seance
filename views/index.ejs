@@ -14,6 +14,8 @@
     <% } else if (locals.cap) { %>
         <script nonce="<%= nonce %>">
             window.CAP_CSS_NONCE = '<%= nonce %>';
+            window.CAP_PAKO_URL = '<%= prefix %>/assets/js/pako_inflate.min.js';
+            window.CAP_CUSTOM_WASM_URL = '<%= prefix %>/assets/js/cap_wasm_bg.wasm';
         </script>
         <script nonce="<%= nonce %>" src="<%= prefix %>/assets/js/cap.min.js"></script>
     <% } %>
