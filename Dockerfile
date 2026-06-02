@@ -3,7 +3,9 @@ FROM node:lts-alpine AS baseimg
 FROM baseimg AS build-env
 WORKDIR /build
 RUN apk add --no-cache pnpm
-RUN --mount=target=/build/package.json,source=package.json --mount=target=/build/pnpm-lock.yaml,source=pnpm-lock.yaml \
+RUN --mount=target=/build/package.json,source=package.json \
+    --mount=target=/build/pnpm-lock.yaml,source=pnpm-lock.yaml \
+    --mount=target=/build/pnpm-workspace.yaml,source=pnpm-workspace.yaml \
     pnpm install
 COPY --link . .
 RUN pnpm run build && \
