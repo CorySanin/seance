@@ -1,4 +1,4 @@
-import * as http from "http";
+import path from 'path'
 import crypto from 'crypto';
 import type { Express } from "express";
 import express from 'express';
@@ -7,6 +7,10 @@ import Recaptcha from 'express-recaptcha';
 import * as HCaptcha from 'hcaptcha';
 import nodemailer from "nodemailer";
 import { CapClient } from 'cap-client';
+import i18next from 'i18next';
+import Backend from 'i18next-fs-backend';
+import { LanguageDetector, handle } from 'i18next-http-middleware';
+import type { Server } from 'http';
 import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 
 interface ContactFormForGhostConfig {
@@ -52,12 +56,11 @@ function setDefaultLimits(options: Partial<LimiterOptions>, prefix: string): Par
     options.limit ||= 3;
     options.legacyHeaders ||= false;
     options.store = new MemoryStore();
-    const messageText = options.message || 'Too many requests, please try again later.';
     options.message = (req: express.Request, res: express.Response) => {
         return new Promise((resolve, reject) => {
             res.render('rate-limit', {
                 prefix,
-                text: messageText,
+                text: req.t('RATE_LIMIT_ERROR'),
                 dark: req?.query?.dark && req.query.dark != 'false'
             }, (err, html) => {
                 if (!err) {
@@ -65,7 +68,7 @@ function setDefaultLimits(options: Partial<LimiterOptions>, prefix: string): Par
                 }
                 else {
                     console.error(err);
-                    reject('Something went wrong. Please try again later.');
+                    reject(req.t('PAGE_RENDER_ERROR'));
                 }
             });
         });
@@ -100,7 +103,7 @@ function createCSP(options: {
 
 
 export default class Web {
-    private _webserver: http.Server | null = null;
+    private _webserver: Server | null = null;
 
     constructor(options: ContactFormForGhostConfig = {}) {
         const app: Express = express();
@@ -130,6 +133,18 @@ export default class Web {
         });
         const limiter = rateLimit(setDefaultLimits(options?.limiter || {}, prefix));
         const formParser = express.urlencoded({ extended: true, type: ['application/x-www-form-urlencoded', 'text/html'] });
+        i18next.use(Backend).use(LanguageDetector).init({
+            backend: {
+                loadPath: path.join(process.cwd(), 'locales', '{{lng}}', '{{ns}}.yaml')
+            },
+            detection: {
+                order: ['querystring', 'cookie', 'header'],
+                caches: ['cookie'],
+            },
+            fallbackLng: 'en',
+            preload: ['en', 'fr']
+        });
+        const i18nMiddlware = handle(i18next);
 
         const throwIfUndefined = <T>(value: T | undefined, errorMessage: string): T => {
             if (value === undefined) {
@@ -148,7 +163,7 @@ export default class Web {
         router.use('/assets', express.static('assets'));
         router.use(cspGen);
 
-        router.get('/', (req, res) => {
+        router.get('/', i18nMiddlware, (req, res) => {
             const domain = `${req.protocol}://${req.headers.host}`;
             const nonce = res.locals.cspNonce;
             res.render('index',
@@ -175,7 +190,7 @@ export default class Web {
                     }
                     else {
                         console.error(err);
-                        res.status(500).send('Something went wrong. Please try again later.');
+                        res.status(500).send(req.t('PAGE_RENDER_ERROR'));
                     }
                 });
         });
@@ -208,7 +223,7 @@ export default class Web {
             }
         });
 
-        const createPageRenderer = (res: express.Response) => {
+        const createPageRenderer = (req: express.Request, res: express.Response) => {
             return (err: Error, html: string) => {
                 if (!err) {
                     res.set('Content-Security-Policy', createCSP({
@@ -222,7 +237,7 @@ export default class Web {
                 }
                 else {
                     console.error(err);
-                    res.status(500).send('Something went wrong. Please try again later.');
+                    res.status(500).send(req.t('PAGE_RENDER_ERROR'));
                 }
             }
         }
@@ -233,15 +248,15 @@ export default class Web {
                 {
                     prefix,
                     dark: !!req.query.dark,
-                    header: 'Error',
+                    header: req.t('ERROR_TITLE'),
                     text: 'There was something wrong with the form you submitted. Go back and try again.'
                 },
-                createPageRenderer(res)
+                createPageRenderer(req, res)
             );
         }
 
         const sendMail = async (req: express.Request, res: express.Response) => {
-            const renderPage = createPageRenderer(res);
+            const renderPage = createPageRenderer(req, res);
             const dark = req?.query?.dark && req.query.dark != 'false';
             if (req?.body?.email && req.body.name && req.body.message && emailValidator.test(req.body.email)) {
                 try {
@@ -256,8 +271,8 @@ export default class Web {
                         {
                             prefix,
                             dark,
-                            header: 'Message sent',
-                            text: 'Your message has been received. Thank you!'
+                            header: req.t('SENT_TITLE'),
+                            text: req.t('SENT_MESSAGE')
                         },
                         renderPage
                     );
@@ -269,8 +284,8 @@ export default class Web {
                         {
                             prefix,
                             dark,
-                            header: 'Error',
-                            text: 'An error occurred while attempting to deliver your message. Try again later.'
+                            header: req.t('ERROR_TITLE'),
+                            text: req.t('DELIVERY_ERROR')
                         },
                         renderPage
                     );
@@ -282,7 +297,7 @@ export default class Web {
             }
         }
 
-        router.post('/', limiter, formParser);
+        router.post('/', i18nMiddlware, limiter, formParser);
         if (recaptchaKey) {
             router.post('/', (recaptcha as Recaptcha.RecaptchaV2).middleware.verify, (req, res, next) => {
                 if (!!req.recaptcha && !req.recaptcha.error) {

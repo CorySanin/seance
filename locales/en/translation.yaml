@@ -1,0 +1,15 @@
+NAME_LABEL: Name
+EMAIL_LABEL: Email
+MESSAGE_LABEL: Message
+SEND_BUTTON: Send
+SENT_TITLE: Message sent
+SENT_MESSAGE: Your message has been received. Thank you!
+ERROR_TITLE: Error
+GENERIC_ERROR: &GENERIC_ERROR Something went wrong. Please try again later.
+PAGE_RENDER_ERROR: *GENERIC_ERROR
+FORM_SUBMISSION_ERROR: There was something wrong with the form you submitted. Go back and try again.
+DELIVERY_ERROR: An error occurred while attempting to deliver your message. Try again later.
+RATE_LIMIT_ERROR: Too many requests, please try again later.
+POWERED_BY: Powered by {{- Seance}} for Ghost
+META_DESCRIPTION: A contact form for a Ghost-powered blog. See https://github.com/CorySanin/seance
+

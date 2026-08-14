@@ -228,6 +228,15 @@ importers:
       hcaptcha:
         specifier: 0.2.0
         version: 0.2.0
+      i18next:
+        specifier: ^26.3.6
+        version: 26.3.6(typescript@5.9.3)
+      i18next-fs-backend:
+        specifier: ^2.6.7
+        version: 2.6.7
+      i18next-http-middleware:
+        specifier: ^3.9.8
+        version: 3.9.8
       json5:
         specifier: 2.2.3
         version: 2.2.3
@@ -552,6 +561,20 @@ packages:
   http-errors@2.0.1:
     resolution: {integrity: sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ==}
     engines: {node: '>= 0.8'}
+
+  i18next-fs-backend@2.6.7:
+    resolution: {integrity: sha512-nN2TIycyR/d+OVuLm1ugPyOlMprqPRnQ7QktBgn44F3H8l7TeTH4ffHJ7nUsd4QVJfetWW7/VZ3s+4g7FoAZUA==}
+
+  i18next-http-middleware@3.9.8:
+    resolution: {integrity: sha512-HMKPc/P/v3qI+JX1k8RLsc4IKT3nKwKFt4cPDZB+iSLlEkUblpjiJ2z3YZYgHgY2Xs6cnnqFkJIg4AU3JSTNaA==}
+
+  i18next@26.3.6:
+    resolution: {integrity: sha512-Bu5Z2nAXgfVyM8xvW3jk9EKRIuX37PudsrBViThNFx7CR7aaYTpP01cxNB/E4c4UUzTDiAZRstEhsRfPOL/8xA==}
+    peerDependencies:
+      typescript: ^5 || ^6 || ^7
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   iconv-lite@0.7.2:
     resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
@@ -1048,6 +1071,14 @@ snapshots:
       setprototypeof: 1.2.0
       statuses: 2.0.2
       toidentifier: 1.0.1
+
+  i18next-fs-backend@2.6.7: {}
+
+  i18next-http-middleware@3.9.8: {}
+
+  i18next@26.3.6(typescript@5.9.3):
+    optionalDependencies:
+      typescript: 5.9.3
 
   iconv-lite@0.7.2:
     dependencies:
