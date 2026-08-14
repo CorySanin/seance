@@ -32,5 +32,11 @@
     "watch": "build-shit --watch",
     "start": "node ./distribution/index.js"
   },
-  "packageManager": "pnpm@10.33.0"
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.20.0",
+      "onFail": "download"
+    }
+  }
 }
