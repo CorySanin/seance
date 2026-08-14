@@ -30,6 +30,7 @@ interface ContactFormForGhostConfig {
     subject?: string;
     limiter?: Partial<LimiterOptions>;
     prefix?: string;
+    backendLang?: string;
 }
 
 /**
@@ -145,6 +146,7 @@ export default class Web {
             preload: ['en', 'fr']
         });
         const i18nMiddlware = handle(i18next);
+        const i18nFixed = i18next.getFixedT(process.env.BACKENDLANG || options.backendLang || 'en', null, '');
 
         const throwIfUndefined = <T>(value: T | undefined, errorMessage: string): T => {
             if (value === undefined) {
@@ -264,8 +266,8 @@ export default class Web {
                         to: recipientAddress,
                         from: `Seance <${senderAddress}>`,
                         replyTo: req.body.email,
-                        subject: `${subject} from ${req.body.name}`,
-                        text: req.body.message
+                        subject: i18nFixed('EMAIL_SUBJECT', {subject, sender: req.body.name}),
+                        text: `${i18nFixed('EMAIL_MESSAGE_PREFIX', {sender: `${req.body.name} <${req.body.email}>`})} \n\n${req.body.message}`
                     }));
                     res.render('result',
                         {

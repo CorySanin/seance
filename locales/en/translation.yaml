@@ -12,4 +12,5 @@ DELIVERY_ERROR: An error occurred while attempting to deliver your message. Try 
 RATE_LIMIT_ERROR: Too many requests, please try again later.
 POWERED_BY: Powered by {{- Seance}} for Ghost
 META_DESCRIPTION: A contact form for a Ghost-powered blog. See https://github.com/CorySanin/seance
-
+EMAIL_SUBJECT: '{{- subject}} from {{- sender}}'
+EMAIL_MESSAGE_PREFIX: '{{- sender}} wrote:'

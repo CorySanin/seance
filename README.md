@@ -49,33 +49,37 @@ Seance takes a JSON or JSON5 config file (default location is config/config.json
     "prefix": string
     // Array of hosts allowed to embed the contact form.
     // Default is to allow all (not recommended)
-    allowedHosts: string[],
+    "allowedHosts": string[],
+    // Preferred locale for email contents
+    // Obviously won't translate an email or anything, but certain boilerplate can be localized
+    // default is "en"
+    "backendLang": string,
     // If using reCAPTCHA, provide the site key
-    recaptchaKey: string,
+    "recaptchaKey": string,
     // If using reCAPTCHA, provide the site secret
-    recaptchaSecret: string,
+    "recaptchaSecret": string,
     // If using hCaptcha, provide the site key
-    hCaptchaKey: string,
+    "hCaptchaKey": string,
     // If using hCaptcha, provide the account secret
-    hCaptchaSecret: string,
+    "hCaptchaSecret": string,
     // If using Cap, provide the site key
-    capKey: string,
+    "capKey": string,
     // If using Cap, provide the site secret
-    capSecret: string,
+    "capSecret": string,
     // If using Cap, provide the instance hostname
-    capInstance: string,
+    "capInstance": string,
     // If using Cap, provide the public instance hostname (if different from capInstance)
-    capInstancePublic: string,
+    "capInstancePublic": string,
     // The Nodemailer transport configuration. See https://nodemailer.com/smtp/
-    smtp: SMTPTransport | SMTPTransport.Options,
+    "smtp": SMTPTransport | SMTPTransport.Options,
     // The address to send emails from. Defaults to the smtp username
-    senderAddress: string,
+    "senderAddress": string,
     // The address to send emails to
-    recipientAddress: string,
+    "recipientAddress": string,
     // The subject prefix for all mail sent using this form. Default is "Form submission"
-    subject: string,
+    "subject": string,
     // Options for express-rate-limit
-    limiter: LimiterOptions
+    "limiter": LimiterOptions
 }
 ```
 
