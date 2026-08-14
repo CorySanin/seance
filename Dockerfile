@@ -21,4 +21,4 @@ COPY --link --from=build-env /build .
 USER node
 
 EXPOSE 8080
-CMD [ "npm", "run", "start"]
+CMD [ "node", "./distribution/index.js"]

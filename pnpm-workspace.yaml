@@ -1,5 +1,7 @@
 allowBuilds:
   '@parcel/watcher': false
 minimumReleaseAge: 720
+minimumReleaseAgeExclude:
+  - forking-build-shit@1.1.7
 overrides:
   qs@>=6.11.1 <=6.15.1: '>=6.15.2'
