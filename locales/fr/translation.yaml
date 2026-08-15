@@ -1,0 +1,16 @@
+NAME_LABEL: Nom
+EMAIL_LABEL: Courriel
+MESSAGE_LABEL: Message
+SEND_BUTTON: Envoyer
+SENT_TITLE: Message envoyé
+SENT_MESSAGE: Votre message a bien été reçu. Merci !
+ERROR_TITLE: Erreur
+GENERIC_ERROR: &GENERIC_ERROR Il y a eu un imprévu quelque part. Merci d'essayer un peu plus tard.
+PAGE_RENDER_ERROR: *GENERIC_ERROR
+FORM_SUBMISSION_ERROR: Quelque chose s'est mal passé avec le formulaire. Essaies à nouveau.
+DELIVERY_ERROR: Une erreur est survenue lors de l'envoi de votre message. Vous pouvez réessayer plus tard.
+RATE_LIMIT_ERROR: Trop d'envois, vous pouvez réessayer plus tard.
+POWERED_BY: Propulsé par {{- Seance}} pour Ghost
+META_DESCRIPTION: Un formulaire de contact pour l'outil de blog Ghost. Voir https://github.com/CorySanin/seance
+EMAIL_SUBJECT: '{{- subject}} de {{- sender}}'
+EMAIL_MESSAGE_PREFIX: '{{- sender}} a écrit:'
