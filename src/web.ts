@@ -198,35 +198,32 @@ export default class Web {
         });
 
         router.get('/services/oembed{/}', (req, res) => {
-            console.log('begin /services/oembed route');
             const defaultWidth = 720;
             const defaultHeight = 600;
             const urlParam = req.query?.url;
             const url = urlParam && typeof urlParam === 'string' && new URL(urlParam);
             const domain = `${req.protocol}://${req.headers.host}`;
             if (!url || url.pathname !== '/') {
-                console.log('EXIT 1');
                 res.status(404).json({
                     success: false
                 });
             }
             else if ('format' in req.query && (req.query.format as string).toLowerCase() !== 'json') {
-                console.log('EXIT 2');
-                console.log(req.query.format);
                 res.status(501).send('oEmbed response is JSON only.');
             }
             else {
                 const width = Math.min(defaultWidth, parseInt(typeof req.query.maxwidth === 'string' && req.query.maxwidth || `${defaultWidth}`));
                 const height = Math.min(defaultHeight, parseInt(typeof req.query.maxheight === 'string' && req.query.maxheight || `${defaultHeight}`));
-                console.log('EXIT 3');
-                res.json({
+                const response = {
                     success: true,
                     type: 'rich',
                     version: '1.0',
                     width,
                     height,
                     html: `<iframe width="${width}" height="${height}" src="${domain}${url.pathname}${url.search}" frameBorder="0" style="max-width:100%"></iframe>`
-                });
+                };
+                console.info(response);
+                res.json(response);
             }
         });
 
