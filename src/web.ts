@@ -168,7 +168,7 @@ export default class Web {
             res.locals.dark = ['true', 'auto'].some(theme => req?.query?.dark === theme) && req.query.dark;
             next && next();
         });
-        router.get('/', i18nMiddlware, useragent, (req, res, next) => {
+        router.get('/', i18nMiddlware, useragent(), (req, res, next) => {
             console.log(res.locals);
             if (req.headers['sec-fetch-dest'] === 'iframe' || req.useragent?.isBot) {
                 next();
