@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import type { Express } from "express";
 import express from 'express';
 import { rateLimit, MemoryStore, type Options as LimiterOptions } from 'express-rate-limit';
+import { express as useragent } from 'express-useragent';
 import Recaptcha from 'express-recaptcha';
 import * as HCaptcha from 'hcaptcha';
 import nodemailer from "nodemailer";
@@ -167,9 +168,9 @@ export default class Web {
             res.locals.dark = ['true', 'auto'].some(theme => req?.query?.dark === theme) && req.query.dark;
             next && next();
         });
-        router.get('/', i18nMiddlware, (req, res, next) => {
+        router.get('/', i18nMiddlware, useragent, (req, res, next) => {
             console.log(res.locals);
-            if (req.headers['sec-fetch-dest'] === 'iframe') {
+            if (req.headers['sec-fetch-dest'] === 'iframe' || req.useragent?.isBot) {
                 next();
                 return;
             }

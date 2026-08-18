@@ -225,6 +225,9 @@ importers:
       express-recaptcha:
         specifier: 5.1.0
         version: 5.1.0
+      express-useragent:
+        specifier: ^2.2.2
+        version: 2.2.2
       hcaptcha:
         specifier: 0.2.0
         version: 0.2.0
@@ -511,6 +514,10 @@ packages:
   express-recaptcha@5.1.0:
     resolution: {integrity: sha512-L9BSaHbwVzEAf38LNnFwEbk4qpX1LiD1z8viBGYBuxyBWWVKMgBrKDb1mNLq6uSxubJzZbyIz+0ldgTSXfxsvQ==}
     engines: {node: '>= 6'}
+
+  express-useragent@2.2.2:
+    resolution: {integrity: sha512-pCizBkIdBP91/zXpVjFv4sMr2CnIUyLetF6IFkZ9Ew46ob2aYl2SebYDVLxMw5anKkVTKYafm0Gh4Am0rutE4g==}
+    engines: {node: '>=18'}
 
   express@5.2.1:
     resolution: {integrity: sha512-hIS4idWWai69NezIdRt2xFVofaF4j+6INOpJlVOLDO8zXGpUVEVzIYk12UUi2JzjEzWL3IOAxcTubgz9Po0yXw==}
@@ -979,6 +986,8 @@ snapshots:
       - supports-color
 
   express-recaptcha@5.1.0: {}
+
+  express-useragent@2.2.2: {}
 
   express@5.2.1:
     dependencies:

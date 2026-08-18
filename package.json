@@ -10,6 +10,7 @@
     "express": "5.2.1",
     "express-rate-limit": "8.6.2",
     "express-recaptcha": "5.1.0",
+    "express-useragent": "^2.2.2",
     "hcaptcha": "0.2.0",
     "i18next": "^26.3.6",
     "i18next-fs-backend": "^2.6.7",
