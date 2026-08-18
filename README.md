@@ -85,10 +85,4 @@ Seance takes a JSON or JSON5 config file (default location is config/config.json
 
 ## Ghost Installation
 
-Create a page for your contact form. Add an "Other" embed section. Enter your Seance instance's URL:
-
-```
-https://contact.example.com/?dark=false
-```
-
-If you're using a dark theme you can change the `dark` parameter to `true`. Note that the dark mode may look weird in the editor. It will look better on the live site.
+Navigate to where Seance is hosted and copy the HTML embed snippet. In Ghost, Create a page for your contact form. Add an "HTML" card and paste the snippet.
