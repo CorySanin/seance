@@ -14,3 +14,10 @@ POWERED_BY: Powered by {{- Seance}} for Ghost
 META_DESCRIPTION: A contact form for a Ghost-powered blog. See https://github.com/CorySanin/seance
 EMAIL_SUBJECT: '{{- subject}} from {{- sender}}'
 EMAIL_MESSAGE_PREFIX: '{{- sender}} wrote:'
+INSTRUCTIONS_TEXT: 'On your Ghost site, create a new HTML card in the page editor. Paste the above HTML snippet and save.'
+THEME_LABEL: 'Theme'
+THEME_LIGHT: 'Light'
+THEME_DARK: 'Dark'
+THEME_AUTO: 'System'
+EMBED_LABEL: 'Embed HTML'
+COPY_BUTTON: 'Copy'

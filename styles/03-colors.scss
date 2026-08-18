@@ -7,13 +7,24 @@
     --link: #3949AB;
 }
 
-body.dark {
+body.dark, body.dark-true {
     --foreground: #EEEEEE;
     --inputbg: #212121;
     --intensebg: #000;
     --inputborder: #616161;
     --subtle: #BDBDBD;
     --link: #7986CB;
+}
+
+@media (prefers-color-scheme: dark) {
+    body.dark-auto {
+        --foreground: #EEEEEE;
+        --inputbg: #212121;
+        --intensebg: #000;
+        --inputborder: #616161;
+        --subtle: #BDBDBD;
+        --link: #7986CB;
+    }
 }
 
 cap-widget {
@@ -32,12 +43,17 @@ body {
     color: var(--foreground);
 }
 
+body.landing {
+    background-color: var(--intensebg);
+}
+
 a {
     color: var(--link);
 }
 
 input,
 textarea,
+select,
 button,
 .button {
     background-color: var(--inputbg);
@@ -49,13 +65,16 @@ button,
     }
 
     &:disabled,
-    &[disabled],
-    &[readonly] {
+    &[disabled] {
         color: var(--inputborder);
 
         &:hover {
             border-color: var(--inputborder);
         }
+    }
+
+    &[readonly] {
+        color: var(--subtle);
     }
 }
 

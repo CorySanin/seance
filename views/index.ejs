@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<%= resolvedLanguage %>">
 
 <head>
     <%- include("head", locals) %>
@@ -8,20 +8,20 @@
     title="Contact form" />
 
     <% if (locals.recaptcha) { %>
-        <script nonce="<%= nonce %>" src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <script nonce="<%= cspNonce %>" src="https://www.google.com/recaptcha/api.js" async defer></script>
     <% } else if (locals.hCaptcha) { %>
-        <script nonce="<%= nonce %>" src="https://js.hcaptcha.com/1/api.js" async defer></script>
+        <script nonce="<%= cspNonce %>" src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <% } else if (locals.cap) { %>
-        <script nonce="<%= nonce %>">
-            window.CAP_CSS_NONCE = '<%= nonce %>';
+        <script nonce="<%= cspNonce %>">
+            window.CAP_CSS_NONCE = '<%= cspNonce %>';
             window.CAP_PAKO_URL = '<%= prefix %>/assets/js/pako_inflate.min.js';
             window.CAP_CUSTOM_WASM_URL = '<%= prefix %>/assets/js/cap_wasm_bg.wasm';
         </script>
-        <script nonce="<%= nonce %>" src="<%= prefix %>/assets/js/cap.min.js"></script>
+        <script nonce="<%= cspNonce %>" src="<%= prefix %>/assets/js/cap.min.js"></script>
     <% } %>
 </head>
 
-<body <% if (locals.dark) { echo('class="dark"') }%>>
+<body <% if (locals.dark) { echo(`class="dark-${locals.dark}"`) }%>>
     <div id="main">
         <div class="container panel">
             <form class="form" id="contactForm" method="post">
@@ -43,7 +43,7 @@
             </form>
         </div>
     </div>
-    <script nonce="<%= nonce %>" src="<%= prefix %>/assets/js/form.js" defer></script>
+    <script nonce="<%= cspNonce %>" src="<%= prefix %>/assets/js/form.js" defer></script>
 </body>
 
 </html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<%= resolvedLanguage %>">
+
+<head>
+    <%- include("head", locals) %>
+    <link rel="alternate" type="application/json+oembed"
+    href="<%= domain %><%= prefix %>/services/oembed?url=<%= encodeURIComponent(url) %>&format=json"
+    title="Contact form" />
+</head>
+
+<body class="dark-auto landing">
+    <div id="main">
+        <div class="container panel">
+            <div class="form mb">
+                <label for="themeSelect"><%= t('THEME_LABEL') %></label>
+                <select id="themeSelect">
+                    <option value="false"><%= t('THEME_LIGHT') %></option>
+                    <option value="true"><%= t('THEME_DARK') %></option>
+                    <option value="auto"><%= t('THEME_AUTO') %></option>
+                </select>
+                <label for="embedTxt"><%= t('EMBED_LABEL') %></label>
+                <textarea name="message" id="embedTxt" readonly></textarea>
+                <div class="second-col">
+                    <button id="copyBtn"><%= t('COPY_BUTTON') %></button>
+                    <span id="checkmarkArea"></span>
+                </div>
+            </div>
+            <p><%= t('INSTRUCTIONS_TEXT') %></p>
+            <p><%- t('POWERED_BY', { Seance: '<a href="https://github.com/CorySanin/seance" target="_blank">Seance</a>' }) %></p>
+        </div>
+    </div>
+    <script nonce="<%= cspNonce %>" src="<%= prefix %>/assets/js/landing.js" defer></script>
+</body>
+
+</html>

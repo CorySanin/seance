@@ -54,14 +54,6 @@ body {
     text-align: center;
 }
 
-input,
-textarea,
-button,
-.button {
-    border-style: solid;
-    border-width: 2px;
-}
-
 input[type="button"],
 input[type="submit"],
 button,
@@ -76,8 +68,11 @@ button,
 
 input,
 textarea,
+select,
 button,
 .button {
+    border-style: solid;
+    border-width: 2px;
     padding: 5px 10px;
 
     &:disabled,
@@ -99,6 +94,10 @@ button,
 
 .display-none {
     display: none;
+}
+
+.mb {
+    margin-bottom: 1em;
 }
 
 @media screen and (max-width: 400px) {

@@ -61,8 +61,7 @@ function setDefaultLimits(options: Partial<LimiterOptions>, prefix: string): Par
         return new Promise((resolve, reject) => {
             res.render('rate-limit', {
                 prefix,
-                text: req.t('RATE_LIMIT_ERROR'),
-                dark: req?.query?.dark && req.query.dark != 'false'
+                text: req.t('RATE_LIMIT_ERROR')
             }, (err, html) => {
                 if (!err) {
                     resolve(html);
@@ -164,25 +163,38 @@ export default class Web {
         app.set('view options', VIEWOPTIONS);
         router.use('/assets', express.static('assets'));
         router.use(cspGen);
-
-        router.get('/', i18nMiddlware, (req, res) => {
+        router.use((req, res, next) => {
+            res.locals.dark = ['true', 'auto'].some(theme => req?.query?.dark === theme) && req.query.dark;
+            next && next();
+        });
+        router.get('/', i18nMiddlware, (req, res, next) => {
+            console.log(res.locals);
+            if (req.headers['sec-fetch-dest'] === 'iframe') {
+                next();
+                return;
+            }
             const domain = `${req.protocol}://${req.headers.host}`;
-            const nonce = res.locals.cspNonce;
+            res.render('instructions', {
+                prefix,
+                domain,
+                url: `${domain}${req.url}`
+            });
+        }, (req, res) => {
+            const domain = `${req.protocol}://${req.headers.host}`;
+
             res.render('index',
                 {
-                    nonce,
                     prefix,
                     recaptcha: recaptchaKey,
                     hCaptcha: hCaptchaKey,
                     cap: capClient && `${capInstancePublic}/${capKey}/`,
                     domain,
-                    url: `${domain}${req.url}`,
-                    dark: req?.query?.dark && req.query.dark != 'false'
+                    url: `${domain}${req.url}`
                 },
                 function (err, html) {
                     if (!err) {
                         res.set('Content-Security-Policy', createCSP({
-                            nonce,
+                            nonce: res.locals.cspNonce,
                             allowedHosts,
                             cap: !!capClient,
                             recaptcha: !!recaptcha,
@@ -222,7 +234,6 @@ export default class Web {
                     height,
                     html: `<iframe width="${width}" height="${height}" src="${domain}${url.pathname}${url.search}" frameBorder="0" style="max-width:100%"></iframe>`
                 };
-                console.info(response);
                 res.json(response);
             }
         });
@@ -251,7 +262,6 @@ export default class Web {
             res.render('result',
                 {
                     prefix,
-                    dark: !!req.query.dark,
                     header: req.t('ERROR_TITLE'),
                     text: 'There was something wrong with the form you submitted. Go back and try again.'
                 },
@@ -261,20 +271,18 @@ export default class Web {
 
         const sendMail = async (req: express.Request, res: express.Response) => {
             const renderPage = createPageRenderer(req, res);
-            const dark = req?.query?.dark && req.query.dark != 'false';
             if (req?.body?.email && req.body.name && req.body.message && emailValidator.test(req.body.email)) {
                 try {
                     console.log(await emailTransport.sendMail({
                         to: recipientAddress,
                         from: `Seance <${senderAddress}>`,
                         replyTo: req.body.email,
-                        subject: i18nFixed('EMAIL_SUBJECT', {subject, sender: req.body.name}),
-                        text: `${i18nFixed('EMAIL_MESSAGE_PREFIX', {sender: `${req.body.name} <${req.body.email}>`})} \n\n${req.body.message}`
+                        subject: i18nFixed('EMAIL_SUBJECT', { subject, sender: req.body.name }),
+                        text: `${i18nFixed('EMAIL_MESSAGE_PREFIX', { sender: `${req.body.name} <${req.body.email}>` })} \n\n${req.body.message}`
                     }));
                     res.render('result',
                         {
                             prefix,
-                            dark,
                             header: req.t('SENT_TITLE'),
                             text: req.t('SENT_MESSAGE')
                         },
@@ -287,7 +295,6 @@ export default class Web {
                     res.render('result',
                         {
                             prefix,
-                            dark,
                             header: req.t('ERROR_TITLE'),
                             text: req.t('DELIVERY_ERROR')
                         },

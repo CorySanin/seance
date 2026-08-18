@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<%= resolvedLanguage %>">
 
 <head>
     <%- include("head", locals) %>
@@ -7,7 +7,7 @@
     <meta name="robots" content="noindex">
 </head>
 
-<body <% if (locals.dark) { echo('class="dark"') }%>>
+<body <% if (locals.dark) { echo(`class="dark-${locals.dark}"`) }%>>
     <div id="main">
         <div class="container panel">
             <h1><%= header %></h1>
