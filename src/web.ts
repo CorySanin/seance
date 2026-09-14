@@ -6,13 +6,12 @@ import { rateLimit, MemoryStore, type Options as LimiterOptions } from 'express-
 import { express as useragent } from 'express-useragent';
 import Recaptcha from 'express-recaptcha';
 import * as HCaptcha from 'hcaptcha';
-import nodemailer from "nodemailer";
+import { createTransport, type SMTPTransportOptions } from "nodemailer";
 import { CapClient } from 'cap-client';
 import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
 import { LanguageDetector, handle } from 'i18next-http-middleware';
 import type { Server } from 'http';
-import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 
 interface ContactFormForGhostConfig {
     port?: number;
@@ -25,7 +24,7 @@ interface ContactFormForGhostConfig {
     capSecret?: string;
     capInstance?: string;
     capInstancePublic?: string;
-    smtp?: SMTPTransport | SMTPTransport.Options;
+    smtp?: SMTPTransportOptions;
     senderAddress?: string;
     recipientAddress?: string;
     subject?: string;
@@ -116,7 +115,7 @@ export default class Web {
         const prefix = options.prefix || '';
         const allowedHosts = (process.env.ALLOWEDHOSTS || (options.allowedHosts || ['*']).join(' '));
         const emailValidator = /^[^@\s]+@[^@.\s]+\.[^@\s]+$/;
-        const emailTransport = nodemailer.createTransport(options.smtp);
+        const emailTransport = createTransport(options.smtp);
         const recaptchaKey = process.env.RECAPTCHAKEY || options.recaptchaKey;
         const hCaptchaKey = process.env.HCAPTCHAKEY || options.hCaptchaKey;
         const capKey = process.env.CAPKEY || options.capKey;
@@ -169,7 +168,6 @@ export default class Web {
             next && next();
         });
         router.get('/', i18nMiddlware, useragent(), (req, res, next) => {
-            console.log(res.locals);
             if (req.headers['sec-fetch-dest'] === 'iframe' || req.useragent?.isBot) {
                 next();
                 return;

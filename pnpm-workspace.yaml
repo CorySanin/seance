@@ -3,5 +3,6 @@ allowBuilds:
 minimumReleaseAge: 720
 minimumReleaseAgeExclude:
   - forking-build-shit@1.1.7
+  - qs@6.15.4
 overrides:
-  qs@>=6.11.1 <=6.15.1: '>=6.15.2'
+  body-parser@>=2.0.0 <2.3.0: ^2.3.0
