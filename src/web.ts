@@ -168,7 +168,7 @@ export default class Web {
             next && next();
         });
         router.get('/', i18nMiddlware, useragent(), (req, res, next) => {
-            if (req.headers['sec-fetch-dest'] === 'iframe' || req.useragent?.isBot) {
+            if (req.headers['sec-fetch-dest'] === 'iframe' || req.useragent?.isBot || process.env['FORCE_FORM']) {
                 next();
                 return;
             }
