@@ -2,7 +2,7 @@
   "name": "seance-for-ghost",
   "module": "index.ts",
   "type": "module",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "license": "GPL-3.0",
   "dependencies": {
     "cap-client": "^1.0.0",
@@ -16,7 +16,7 @@
     "i18next-fs-backend": "^2.6.8",
     "i18next-http-middleware": "^3.9.9",
     "json5": "2.2.3",
-    "nodemailer": "10.0.9"
+    "nodemailer": "10.0.12"
   },
   "devDependencies": {
     "@cap.js/wasm": "0.0.7",
@@ -38,7 +38,7 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "^11.22.0",
+      "version": "^12.8.1",
       "onFail": "download"
     }
   }
