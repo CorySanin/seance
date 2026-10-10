@@ -18,7 +18,7 @@
     <% } %>
 </head>
 
-<body <% if (locals.dark) { echo(`class="dark-${locals.dark}"`) }%>>
+<body <% if (locals.dark) { %>class="dark-<%= locals.dark %>"`) <% } %>>
     <div id="main">
         <div class="container panel">
             <form class="form" id="contactForm" method="post">
@@ -29,9 +29,9 @@
                 <label for="messageTxt"><%= t('MESSAGE_LABEL') %></label>
                 <textarea name="message" id="messageTxt" required></textarea>
                 <% if (locals.recaptcha) { %>
-                <div class="second-col g-recaptcha" data-sitekey="<%= recaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
+                <div class="second-col g-recaptcha" data-sitekey="<%= recaptcha %>" data-theme="<%= locals.dark ? 'dark':'light' %>" data-callback="unblockSend"></div>
                 <% } else if (locals.hCaptcha) { %>
-                <div class="second-col h-captcha" data-sitekey="<%= hCaptcha %>" data-theme="<% echo(locals.dark ? 'dark':'light') %>" data-callback="unblockSend"></div>
+                <div class="second-col h-captcha" data-sitekey="<%= hCaptcha %>" data-theme="<%= locals.dark ? 'dark':'light' %>" data-callback="unblockSend"></div>
                 <% } else if (locals.cap) { %>
                 <cap-widget class="second-col cap" id="cap" required data-cap-api-endpoint="<%= cap %>"></cap-widget>
                 <% } %>

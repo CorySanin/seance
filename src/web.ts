@@ -109,9 +109,6 @@ export default class Web {
         const app: Express = express();
         const router = express.Router();
         const port: number = notStupidParseInt(process.env.PORT) || options['port'] as number || 8080;
-        const VIEWOPTIONS = {
-            outputFunctionName: 'echo'
-        };
         const prefix = options.prefix || '';
         const allowedHosts = (process.env.ALLOWEDHOSTS || (options.allowedHosts || ['*']).join(' '));
         const emailValidator = /^[^@\s]+@[^@.\s]+\.[^@\s]+$/;
@@ -160,7 +157,6 @@ export default class Web {
 
         app.set('trust proxy', 1);
         app.set('view engine', 'ejs');
-        app.set('view options', VIEWOPTIONS);
         router.use('/assets', express.static('assets'));
         router.use(cspGen);
         router.use((req, res, next) => {
