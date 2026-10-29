@@ -2,28 +2,28 @@
   "name": "seance-for-ghost",
   "module": "index.ts",
   "type": "module",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "license": "GPL-3.0",
   "dependencies": {
     "cap-client": "^1.0.0",
-    "ejs": "7.0.1",
+    "ejs": "7.0.2",
     "express": "5.3.0",
-    "express-rate-limit": "8.7.1",
+    "express-rate-limit": "8.7.2",
     "express-recaptcha": "5.1.0",
     "express-useragent": "^2.2.3",
     "hcaptcha": "0.2.0",
-    "i18next": "^26.4.3",
-    "i18next-fs-backend": "^2.6.8",
-    "i18next-http-middleware": "^3.9.9",
+    "i18next": "^26.5.11",
+    "i18next-fs-backend": "^2.6.9",
+    "i18next-http-middleware": "^3.9.11",
     "json5": "2.2.3",
-    "nodemailer": "10.0.12"
+    "nodemailer": "10.3.1"
   },
   "devDependencies": {
     "@cap.js/wasm": "0.0.7",
     "@types/express": "5.0.6",
-    "@types/node": "^24.7.1",
+    "@types/node": "26.6.6",
     "cap-widget": "^0.1.56",
-    "forking-build-shit": "1.1.7",
+    "forking-build-shit": "1.1.9",
     "pako": "2.1.0"
   },
   "peerDependencies": {
@@ -38,7 +38,7 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "^12.11.2",
+      "version": "^12.16.1",
       "onFail": "download"
     }
   }
