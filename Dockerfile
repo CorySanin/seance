@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS baseimg
+FROM node:current-alpine AS baseimg
 
 FROM baseimg AS build-env
 WORKDIR /build
